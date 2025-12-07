@@ -1,46 +1,115 @@
-# Getting Started with Create React App
+# 📝 Todo App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A beautiful and responsive Todo application built with React, TypeScript, and Tailwind CSS. This project demonstrates modern web development practices with a clean UI/UX design.
 
-## Available Scripts
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+- ✅ **Add Todos**: Easily add new tasks to your list
+- 🔄 **Toggle Completion**: Mark tasks as completed or incomplete
+- 🗑️ **Delete Todos**: Remove tasks you no longer need
+- 🎨 **Beautiful UI**: Modern design with Tailwind CSS
+- 📱 **Responsive**: Works perfectly on desktop and mobile devices
+- 🌙 **Dark Mode Ready**: Supports dark mode themes
+- ⚡ **Fast**: Built with Vite for lightning-fast development and builds
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 🚀 Tech Stack
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Frontend Framework**: React 19
+- **Build Tool**: Vite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **State Management**: React Hooks
 
-### `npm test`
+## 📦 Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone the repository**
 
-### `npm run build`
+   ```bash
+   git clone https://github.com/HamedSadim1/labo3-checkbox.git
+   cd labo3-checkbox
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Install dependencies**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Start the development server**
 
-### `npm run eject`
+   ```bash
+   npm run dev
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+4. **Open your browser**
+   Navigate to [http://localhost:5173](http://localhost:5173)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📖 Usage
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Adding a Todo
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Type your task in the input field
+- Press Enter or click the "Add" button
 
-## Learn More
+### Managing Todos
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Click the checkbox to mark a task as completed
+- Hover over a task and click the delete icon to remove it
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🛠️ Available Scripts
+
+| Command           | Description                         |
+| ----------------- | ----------------------------------- |
+| `npm run dev`     | Starts the development server       |
+| `npm run build`   | Builds the app for production       |
+| `npm run preview` | Serves the production build locally |
+
+## 📁 Project Structure
+
+```text
+src/
+├── components/          # Reusable UI components
+│   ├── AddTodo.tsx     # Component for adding new todos
+│   ├── TodoItem.tsx    # Individual todo item component
+│   └── TodoList.tsx    # List container for todos
+├── hooks/              # Custom React hooks
+│   └── useTodos.ts     # Todo state management hook
+├── App.tsx             # Main application component
+├── index.tsx           # Application entry point
+├── index.css           # Global styles and Tailwind imports
+└── react-app-env.d.ts  # TypeScript declarations
+```
+
+## 🎯 Key Concepts Demonstrated
+
+- **Component Composition**: Breaking down the UI into reusable components
+- **Custom Hooks**: Separating business logic from UI components
+- **TypeScript**: Strong typing for better code reliability
+- **Modern React**: Using hooks and functional components
+- **CSS-in-JS**: Utility-first styling with Tailwind CSS
+- **Build Optimization**: Fast development with Vite
+
+## 🤝 Contributing
+
+This is an educational project for the Webframeworks course at AP Hogeschool. Contributions are welcome for learning purposes!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built as part of the Webframeworks lab assignment
+- Inspired by modern todo applications
+- Thanks to the React and Vite communities for excellent documentation
