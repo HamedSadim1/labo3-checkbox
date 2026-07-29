@@ -73,30 +73,57 @@ const defaultData: TodoData = {
 /* ──── Hook ──── */
 
 // Migrate old data to latest format – fills in missing fields
-const migrateData = (raw: any): TodoData => {
-  const lists: TodoListMeta[] = (raw.lists ?? []).map((l: any) => ({
-    id: l.id,
-    name: l.name,
-    color: l.color ?? LIST_COLORS[0],
-    createdAt: l.createdAt ?? Date.now(),
-  }));
-  const todos: TodoItem[] = (raw.todos ?? []).map((t: any, i: number) => ({
-    id: t.id ?? Date.now() + i,
-    listId: lists.some((l) => l.id === t.listId) ? t.listId : lists[0]?.id ?? "default",
-    text: t.text ?? "",
-    completed: t.completed ?? false,
-    priority: ["low", "medium", "high"].includes(t.priority) ? t.priority : "medium",
-    dueDate: t.dueDate ?? null,
-    reminderEnabled: t.reminderEnabled ?? false,
-    createdAt: t.createdAt ?? Date.now(),
-    order: t.order ?? i,
-  }));
+const migrateData = (raw: unknown): TodoData => {
+  const rawData =
+    typeof raw === "object" && raw !== null
+      ? (raw as Record<string, unknown>)
+      : ({} as Record<string, unknown>);
+  const rawLists = Array.isArray(rawData.lists) ? rawData.lists : [];
+  const rawTodos = Array.isArray(rawData.todos) ? rawData.todos : [];
+
+  const lists: TodoListMeta[] = rawLists.map((l: unknown) => {
+    const list =
+      typeof l === "object" && l !== null
+        ? (l as Record<string, unknown>)
+        : ({} as Record<string, unknown>);
+    return {
+      id: String(list.id),
+      name: String(list.name),
+      color: typeof list.color === "string" ? list.color : LIST_COLORS[0],
+      createdAt: typeof list.createdAt === "number" ? list.createdAt : Date.now(),
+    };
+  });
+  const todos: TodoItem[] = rawTodos.map((t: unknown, i: number) => {
+    const todo =
+      typeof t === "object" && t !== null
+        ? (t as Record<string, unknown>)
+        : ({} as Record<string, unknown>);
+    return {
+      id: typeof todo.id === "number" ? todo.id : Date.now() + i,
+      listId: lists.some((l) => l.id === todo.listId)
+        ? String(todo.listId)
+        : lists[0]?.id ?? "default",
+      text: typeof todo.text === "string" ? todo.text : "",
+      completed: typeof todo.completed === "boolean" ? todo.completed : false,
+      priority:
+        typeof todo.priority === "string" &&
+        ["low", "medium", "high"].includes(todo.priority)
+          ? (todo.priority as Priority)
+          : "medium",
+      dueDate: typeof todo.dueDate === "string" ? todo.dueDate : null,
+      reminderEnabled: typeof todo.reminderEnabled === "boolean" ? todo.reminderEnabled : false,
+      createdAt: typeof todo.createdAt === "number" ? todo.createdAt : Date.now(),
+      order: typeof todo.order === "number" ? todo.order : i,
+    };
+  });
   return {
     lists,
     todos,
-    activeListId: lists.some((l) => l.id === raw.activeListId)
-      ? raw.activeListId
-      : lists[0]?.id ?? "default",
+    activeListId:
+      typeof rawData.activeListId === "string" &&
+      lists.some((l) => l.id === rawData.activeListId)
+        ? rawData.activeListId
+        : lists[0]?.id ?? "default",
   };
 };
 

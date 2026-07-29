@@ -63,19 +63,19 @@ const TodoItem: React.FC<TodoItemProps> = ({
     }
   }, []);
 
+  const handleDelete = useCallback(() => {
+    setIsExiting(true);
+    SoundEffects.delete();
+    setTimeout(() => onDelete(todo.id), 280);
+  }, [onDelete, todo.id]);
+
   const handleTouchEnd = useCallback(() => {
     setIsSwiping(false);
     if (swipeOffset < -50) {
       handleDelete();
     }
     setSwipeOffset(0);
-  }, [swipeOffset]);
-
-  const handleDelete = () => {
-    setIsExiting(true);
-    SoundEffects.delete();
-    setTimeout(() => onDelete(todo.id), 280);
-  };
+  }, [swipeOffset, handleDelete]);
 
   const handleToggle = () => {
     if (todo.completed) {
@@ -111,9 +111,10 @@ const TodoItem: React.FC<TodoItemProps> = ({
   };
 
   // Due date display
-  const getDueDateInfo = () => {
+  const dueInfo = (() => {
     if (!todo.dueDate) return null;
     const today = new Date().toISOString().slice(0, 10);
+    // eslint-disable-next-line react-hooks/purity
     const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
     const due = new Date(todo.dueDate + "T00:00:00");
 
@@ -121,12 +122,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
     if (todo.dueDate === today) return { text: "Due today", urgent: true };
     if (todo.dueDate === tomorrow) return { text: "Due tomorrow", urgent: false };
 
+    // eslint-disable-next-line react-hooks/purity
     const days = Math.ceil((due.getTime() - Date.now()) / 86400000);
     if (days <= 3) return { text: `Due in ${days} days`, urgent: false };
     return { text: todo.dueDate, urgent: false };
-  };
-
-  const dueInfo = getDueDateInfo();
+  })();
   const priorityInfo = priorityConfig[todo.priority];
 
   return (

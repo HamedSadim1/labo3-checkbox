@@ -4,9 +4,17 @@
 let audioContext: AudioContext | null = null;
 let enabled = true;
 
+interface WindowWithWebKitAudio extends Window {
+  webkitAudioContext?: typeof AudioContext;
+}
+
 const getContext = (): AudioContext => {
   if (!audioContext) {
-    audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const Ctx = window.AudioContext ?? (window as WindowWithWebKitAudio).webkitAudioContext;
+    if (!Ctx) {
+      throw new Error("Web Audio API not supported");
+    }
+    audioContext = new Ctx();
   }
   return audioContext;
 };

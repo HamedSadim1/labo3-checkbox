@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useState, type ReactNode } from "react";
 
 export type Filter = "all" | "active" | "completed";
 
@@ -7,12 +7,10 @@ interface FilterContextType {
   setFilter: (filter: Filter) => void;
 }
 
-const FilterContext = createContext<FilterContextType>({
+export const FilterContext = createContext<FilterContextType>({
   filter: "all",
   setFilter: () => {},
 });
-
-export const useFilter = () => useContext(FilterContext);
 
 export const FilterProvider = ({ children }: { children: ReactNode }) => {
   const [filter, setFilter] = useState<Filter>("all");

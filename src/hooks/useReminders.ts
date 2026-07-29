@@ -104,12 +104,8 @@ export const useReminders = (todos: TodoItem[]) => {
     saveNotified(notifiedRef.current);
   }, [todos, showNotification]);
 
-  // On mount: request permission, check reminders
+  // On mount: check reminders
   useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default") {
-      requestPermission();
-    }
-
     // Check on mount (with small delay so everything is loaded)
     const initialTimeout = setTimeout(() => {
       checkReminders();

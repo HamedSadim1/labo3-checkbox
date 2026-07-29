@@ -6,9 +6,9 @@ import SearchBar from "./components/SearchBar";
 import StatsDashboard from "./components/StatsDashboard";
 import ConfettiEffect from "./components/Confetti";
 import ExportImport from "./components/ExportImport";
-import { useTodos } from "./hooks/useTodos";
-import { useTheme } from "./context/ThemeContext";
-import { useFilter, type Filter } from "./context/FilterContext";
+import { useTodos, type TodoData } from "./hooks/useTodos";
+import { useTheme } from "./hooks/useTheme";
+import { useFilter, type Filter } from "./hooks/useFilter";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { SoundEffects } from "./hooks/useSoundEffects";
 import { useReminders } from "./hooks/useReminders";
@@ -97,7 +97,7 @@ function App() {
 
   // ── Import handler ──
   const handleImport = useCallback(
-    (importedData: any) => {
+    (importedData: TodoData) => {
       replaceData(importedData);
     },
     [replaceData]
