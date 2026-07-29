@@ -1,34 +1,143 @@
-import React from "react";
-import { Todo } from "../hooks/useTodos";
+import { useState, useRef, useEffect } from "react";
+import type { Todo } from "../hooks/useTodos";
 
 interface TodoItemProps {
   todo: Todo;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
+  onEdit: (id: number, newText: string) => void;
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onDelete }) => {
+const TodoItem: React.FC<TodoItemProps> = ({
+  todo,
+  onToggle,
+  onDelete,
+  onEdit,
+}) => {
+  const [isExiting, setIsExiting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(todo.text);
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing) {
+      editInputRef.current?.focus();
+      editInputRef.current?.select();
+    }
+  }, [isEditing]);
+
+  const handleDelete = () => {
+    setIsExiting(true);
+    setTimeout(() => onDelete(todo.id), 280);
+  };
+
+  const handleDoubleClick = () => {
+    if (!todo.completed) {
+      setEditText(todo.text);
+      setIsEditing(true);
+    }
+  };
+
+  const handleEditSubmit = () => {
+    const trimmed = editText.trim();
+    if (trimmed && trimmed !== todo.text) {
+      onEdit(todo.id, trimmed);
+    }
+    setIsEditing(false);
+  };
+
+  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleEditSubmit();
+    } else if (e.key === "Escape") {
+      setEditText(todo.text);
+      setIsEditing(false);
+    }
+  };
+
   return (
-    <li className="flex items-center gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg group hover:bg-white/20 transition-all duration-200">
-      <input
-        type="checkbox"
-        checked={todo.completed}
-        onChange={() => onToggle(todo.id)}
-        className="w-6 h-6 text-blue-600 bg-white/20 border-white/40 rounded focus:ring-white/50 focus:ring-2"
-      />
-      <span
-        className={`flex-1 text-white text-lg ${
-          todo.completed ? "line-through opacity-60" : ""
-        }`}
-      >
-        {todo.text}
-      </span>
+    <li
+      className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 group ${
+        isExiting ? "animate-slide-out" : "animate-slide-in"
+      }`}
+      style={{
+        background: todo.completed
+          ? "var(--color-overlay)"
+          : "transparent",
+        borderColor: "var(--color-input-border)",
+      }}
+    >
+      {/* Custom checkbox */}
       <button
-        onClick={() => onDelete(todo.id)}
-        className="opacity-0 group-hover:opacity-100 text-red-300 hover:text-red-100 transition-all duration-200 p-2 rounded-lg hover:bg-white/10"
+        onClick={() => onToggle(todo.id)}
+        className={`checkbox-custom ${todo.completed ? "checked" : ""}`}
+        aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
+      >
+        {todo.completed && (
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              className="checkmark"
+              d="M5 13l4 4L19 7"
+              stroke="white"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+          </svg>
+        )}
+      </button>
+
+      {/* Todo text or edit input */}
+      {isEditing ? (
+        <input
+          ref={editInputRef}
+          type="text"
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          onBlur={handleEditSubmit}
+          onKeyDown={handleEditKeyDown}
+          className="flex-1 px-3 py-1.5 rounded-lg border text-sm focus:outline-none"
+          style={{
+            color: "var(--color-text)",
+            background: "var(--color-input-bg)",
+            borderColor: "var(--color-accent)",
+          }}
+        />
+      ) : (
+        <span
+          className={`flex-1 text-sm cursor-pointer ${
+            todo.completed ? "line-through" : ""
+          }`}
+          style={{
+            color: todo.completed
+              ? "var(--color-text-secondary)"
+              : "var(--color-text)",
+          }}
+          onDoubleClick={handleDoubleClick}
+          title={todo.completed ? "" : "Double-click to edit"}
+        >
+          {todo.text}
+        </span>
+      )}
+
+      {/* Delete button */}
+      <button
+        onClick={handleDelete}
+        className="opacity-0 group-hover:opacity-100 p-2 rounded-lg transition-all duration-200 hover:scale-110"
+        style={{ color: "var(--color-danger)" }}
+        onMouseEnter={(e) =>
+          ((e.currentTarget as HTMLButtonElement).style.background =
+            "var(--color-accent-light)")
+        }
+        onMouseLeave={(e) =>
+          ((e.currentTarget as HTMLButtonElement).style.background =
+            "transparent")
+        }
+        aria-label="Delete todo"
       >
         <svg
-          className="w-5 h-5"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
