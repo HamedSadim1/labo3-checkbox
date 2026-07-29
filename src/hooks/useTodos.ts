@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { LIST_COLORS } from "@/constants/colors";
+import { STORAGE_KEYS, TIMING } from "@/constants/app";
+import { migrateData } from "@/utils/migration";
+import { generateId } from "@/utils/id";
 
 /* ── Types ── */
 
@@ -42,27 +46,15 @@ export interface Stats {
 
 /* ──── Constants ──── */
 
-const STORAGE_KEY = "labo3-todos-v2";
-const LIST_COLORS = [
-  "#6366f1", // indigo
-  "#ec4899", // pink
-  "#14b8a6", // teal
-  "#f59e0b", // amber
-  "#8b5cf6", // violet
-  "#3b82f6", // blue
-  "#10b981", // emerald
-  "#ef4444", // red
-];
-
 const defaultData: TodoData = {
   lists: [
-    { id: "default", name: "My List", color: LIST_COLORS[0], createdAt: Date.now() - 86400000 },
+    { id: "default", name: "My List", color: LIST_COLORS[0], createdAt: Date.now() - TIMING.MS_PER_DAY },
     { id: "work", name: "Work", color: LIST_COLORS[7], createdAt: Date.now() },
   ],
   todos: [
-    { id: 1, listId: "default", text: "Learn React", completed: true, priority: "high", dueDate: "2026-07-30", reminderEnabled: false, createdAt: Date.now() - 86400000 * 3, order: 0 },
-    { id: 2, listId: "default", text: "Build a Todo App", completed: true, priority: "medium", dueDate: null, reminderEnabled: false, createdAt: Date.now() - 86400000 * 2, order: 1 },
-    { id: 3, listId: "default", text: "Master Tailwind CSS", completed: false, priority: "medium", dueDate: "2026-08-05", reminderEnabled: true, createdAt: Date.now() - 86400000, order: 2 },
+    { id: 1, listId: "default", text: "Learn React", completed: true, priority: "high", dueDate: "2026-07-30", reminderEnabled: false, createdAt: Date.now() - TIMING.MS_PER_DAY * 3, order: 0 },
+    { id: 2, listId: "default", text: "Build a Todo App", completed: true, priority: "medium", dueDate: null, reminderEnabled: false, createdAt: Date.now() - TIMING.MS_PER_DAY * 2, order: 1 },
+    { id: 3, listId: "default", text: "Master Tailwind CSS", completed: false, priority: "medium", dueDate: "2026-08-05", reminderEnabled: true, createdAt: Date.now() - TIMING.MS_PER_DAY, order: 2 },
     { id: 4, listId: "default", text: "Deploy to production", completed: false, priority: "high", dueDate: "2026-07-28", reminderEnabled: true, createdAt: Date.now(), order: 3 },
     { id: 5, listId: "work", text: "Review pull requests", completed: false, priority: "low", dueDate: null, reminderEnabled: false, createdAt: Date.now() - 3600000, order: 0 },
     { id: 6, listId: "work", text: "Write documentation", completed: false, priority: "medium", dueDate: "2026-08-01", reminderEnabled: false, createdAt: Date.now() - 7200000, order: 1 },
@@ -70,67 +62,10 @@ const defaultData: TodoData = {
   activeListId: "default",
 };
 
-/* ──── Hook ──── */
-
-// Migrate old data to latest format – fills in missing fields
-const migrateData = (raw: unknown): TodoData => {
-  const rawData =
-    typeof raw === "object" && raw !== null
-      ? (raw as Record<string, unknown>)
-      : ({} as Record<string, unknown>);
-  const rawLists = Array.isArray(rawData.lists) ? rawData.lists : [];
-  const rawTodos = Array.isArray(rawData.todos) ? rawData.todos : [];
-
-  const lists: TodoListMeta[] = rawLists.map((l: unknown) => {
-    const list =
-      typeof l === "object" && l !== null
-        ? (l as Record<string, unknown>)
-        : ({} as Record<string, unknown>);
-    return {
-      id: String(list.id),
-      name: String(list.name),
-      color: typeof list.color === "string" ? list.color : LIST_COLORS[0],
-      createdAt: typeof list.createdAt === "number" ? list.createdAt : Date.now(),
-    };
-  });
-  const todos: TodoItem[] = rawTodos.map((t: unknown, i: number) => {
-    const todo =
-      typeof t === "object" && t !== null
-        ? (t as Record<string, unknown>)
-        : ({} as Record<string, unknown>);
-    return {
-      id: typeof todo.id === "number" ? todo.id : Date.now() + i,
-      listId: lists.some((l) => l.id === todo.listId)
-        ? String(todo.listId)
-        : lists[0]?.id ?? "default",
-      text: typeof todo.text === "string" ? todo.text : "",
-      completed: typeof todo.completed === "boolean" ? todo.completed : false,
-      priority:
-        typeof todo.priority === "string" &&
-        ["low", "medium", "high"].includes(todo.priority)
-          ? (todo.priority as Priority)
-          : "medium",
-      dueDate: typeof todo.dueDate === "string" ? todo.dueDate : null,
-      reminderEnabled: typeof todo.reminderEnabled === "boolean" ? todo.reminderEnabled : false,
-      createdAt: typeof todo.createdAt === "number" ? todo.createdAt : Date.now(),
-      order: typeof todo.order === "number" ? todo.order : i,
-    };
-  });
-  return {
-    lists,
-    todos,
-    activeListId:
-      typeof rawData.activeListId === "string" &&
-      lists.some((l) => l.id === rawData.activeListId)
-        ? rawData.activeListId
-        : lists[0]?.id ?? "default",
-  };
-};
-
 export const useTodos = () => {
   const [data, setData] = useState<TodoData>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEYS.TODOS);
       if (saved) {
         const parsed = JSON.parse(saved);
         const migrated = migrateData(parsed);
@@ -153,7 +88,7 @@ export const useTodos = () => {
 
   // ── Persist ──
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(STORAGE_KEYS.TODOS, JSON.stringify(data));
   }, [data]);
 
   // ── Refs ──
@@ -213,7 +148,7 @@ export const useTodos = () => {
     const check = new Date();
     while (true) {
       const dayHasCompletion = allTodos.some((t) =>
-        t.completed && Math.abs(t.createdAt - check.getTime()) < 86400000
+        t.completed && Math.abs(t.createdAt - check.getTime()) < TIMING.MS_PER_DAY
       );
       if (dayHasCompletion) { streak++; check.setDate(check.getDate() - 1); }
       else break;
@@ -225,7 +160,7 @@ export const useTodos = () => {
   // ── List CRUD ──
   const addList = useCallback((name: string) => {
     const newList: TodoListMeta = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      id: generateId(),
       name,
       color: LIST_COLORS[dataRef.current.lists.length % LIST_COLORS.length],
       createdAt: Date.now(),
@@ -301,7 +236,7 @@ export const useTodos = () => {
     undoTimeoutRef.current = window.setTimeout(() => {
       setUndoItem(null);
       undoTimeoutRef.current = null;
-    }, 4000);
+    }, TIMING.UNDO_DELETE_MS);
   }, []);
 
   const undoClearCompleted = useCallback(() => {
@@ -396,7 +331,7 @@ export const useTodos = () => {
     undoCompletedTimeoutRef.current = window.setTimeout(() => {
       setUndoCompleted(null);
       undoCompletedTimeoutRef.current = null;
-    }, 4000);
+    }, TIMING.UNDO_CLEAR_MS);
 
     setData((prev) => ({
       ...prev,
@@ -496,7 +431,7 @@ export const useTodos = () => {
       importSuccessTimeoutRef.current = window.setTimeout(() => {
         setImportSuccess(false);
         importSuccessTimeoutRef.current = null;
-      }, 3000);
+      }, TIMING.IMPORT_SUCCESS_MS);
     }, []),
   };
 };

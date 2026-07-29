@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import type { Stats } from "../hooks/useTodos";
+import type { Stats } from "@/hooks/useTodos";
+import { priorityConfig } from "@/constants/priorities";
 
 interface StatsDashboardProps {
   stats: Stats;
@@ -122,7 +123,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "🔥 Streak",
         value: stats.streakDays,
         icon: null,
-        color: stats.streakDays > 0 ? "#f59e0b" : "var(--color-text-secondary)",
+        color: stats.streakDays > 0 ? priorityConfig.medium.color : "var(--color-text-secondary)",
         suffix: stats.streakDays === 1 ? "day" : "days",
       } satisfies CardDef,
       {
@@ -131,7 +132,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         icon: null,
         color:
           stats.highPriorityActive > 0
-            ? "#ef4444"
+            ? priorityConfig.high.color
             : "var(--color-text-secondary)",
       } satisfies CardDef,
     ],

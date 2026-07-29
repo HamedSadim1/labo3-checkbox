@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { TodoItem } from "./useTodos";
-
-const STORAGE_KEY_NOTIFIED = "labo3-notified-todos";
-const CHECK_INTERVAL = 60000; // Check every minute
+import type { TodoItem } from "@/hooks/useTodos";
+import { STORAGE_KEYS, TIMING, NOTIFICATION_ICON_PATH } from "@/constants/app";
 
 interface ReminderState {
   permission: NotificationPermission;
@@ -14,14 +12,14 @@ interface ReminderState {
 // Load set of already-notified todo IDs
 const loadNotified = (): Set<number> => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_NOTIFIED);
+    const raw = localStorage.getItem(STORAGE_KEYS.NOTIFIED);
     if (raw) return new Set(JSON.parse(raw));
   } catch { /* ignore */ }
   return new Set();
 };
 
 const saveNotified = (set: Set<number>) => {
-  localStorage.setItem(STORAGE_KEY_NOTIFIED, JSON.stringify([...set]));
+  localStorage.setItem(STORAGE_KEYS.NOTIFIED, JSON.stringify([...set]));
 };
 
 export const useReminders = (todos: TodoItem[]) => {
@@ -53,7 +51,7 @@ export const useReminders = (todos: TodoItem[]) => {
         new Notification(title, {
           body,
           tag: tag ?? "todo-reminder",
-          icon: "/favicon.png",
+          icon: NOTIFICATION_ICON_PATH,
         });
       } catch {
         // Silently fail
@@ -109,10 +107,10 @@ export const useReminders = (todos: TodoItem[]) => {
     // Check on mount (with small delay so everything is loaded)
     const initialTimeout = setTimeout(() => {
       checkReminders();
-    }, 1500);
+    }, TIMING.REMINDERS_INITIAL_DELAY_MS);
 
     // Periodic check
-    intervalRef.current = window.setInterval(checkReminders, CHECK_INTERVAL);
+    intervalRef.current = window.setInterval(checkReminders, TIMING.REMINDERS_CHECK_INTERVAL_MS);
 
     return () => {
       clearTimeout(initialTimeout);

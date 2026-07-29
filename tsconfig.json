@@ -16,6 +16,9 @@
 
     /* Linting */
     "strict": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true

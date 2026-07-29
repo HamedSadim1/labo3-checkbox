@@ -11,10 +11,10 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import TodoItem from "./TodoItem";
-import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "../hooks/useTodos";
-import type { Filter } from "../context/FilterContext";
-import { SoundEffects } from "../hooks/useSoundEffects";
+import TodoItem from "@/components/TodoItem";
+import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "@/hooks/useTodos";
+import type { Filter } from "@/context/FilterContext";
+import { SoundEffects } from "@/hooks/useSoundEffects";
 
 interface TodoListProps {
   todos: TodoItemType[];

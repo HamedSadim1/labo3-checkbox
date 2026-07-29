@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import type { TodoListMeta, TodoItem } from "../hooks/useTodos";
+import type { TodoListMeta, TodoItem } from "@/hooks/useTodos";
+import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { PLACEHOLDERS } from "@/constants/app";
+import { getListCount, getListActiveCount } from "@/utils/todos";
 
 interface SidebarProps {
   lists: TodoListMeta[];
@@ -62,10 +66,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     }
   };
 
-  const getListCount = (listId: string) =>
-    todos.filter((t) => t.listId === listId).length;
-  const getListActiveCount = (listId: string) =>
-    todos.filter((t) => t.listId === listId && !t.completed).length;
+  // Refs to the count helpers bound to current todos
+  const countTodos = (listId: string) => getListCount(todos, listId);
+  const countActiveTodos = (listId: string) => getListActiveCount(todos, listId);
 
   const handleDragStart = (id: string) => {
     draggedRef.current = id;
@@ -153,7 +156,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 setNewName("");
               }
             }}
-            placeholder="List name..."
+            placeholder={PLACEHOLDERS.LIST_NAME}
             className="w-full px-3 py-2 text-sm rounded-lg focus:outline-none"
             style={{
               background: "var(--color-input-bg)",
@@ -165,11 +168,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       )}
 
       {/* List items */}
-      <nav className="flex-1 overflow-y-auto p-2 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto p-2 space-y-0.5" role="list">
         {lists.map((list) => {
           const isActive = list.id === activeListId;
-          const count = getListCount(list.id);
-          const activeCount = getListActiveCount(list.id);
+          const count = countTodos(list.id);
+          const activeCount = countActiveTodos(list.id);
           const isDragOver = dragOverId === list.id;
 
           return (
@@ -181,6 +184,16 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               onDragLeave={handleDragLeave}
               onDrop={() => handleDrop(list.id)}
               onClick={() => handleSelect(list.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleSelect(list.id);
+                }
+              }}
+              tabIndex={0}
+              role="listitem"
+              aria-label={`Select list ${list.name}${isActive ? " (current)" : ""}`}
+              aria-current={isActive ? "true" : undefined}
               className={`group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${isDragOver ? "scale-[1.02]" : ""}`}
               style={{
                 background: isActive
@@ -216,6 +229,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     onKeyDown={(e) => {
+                      e.stopPropagation();
                       if (e.key === "Enter") handleRename();
                       if (e.key === "Escape") setEditingId(null);
                     }}
@@ -263,10 +277,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               {/* Delete */}
               {lists.length > 1 && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDelete(list.id);
                   }}
+                  onKeyDown={(e) => e.stopPropagation()}
                   className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all duration-200 hover:scale-110"
                   style={{ color: "var(--color-danger)" }}
                   aria-label={`Delete ${list.name}`}
@@ -310,18 +326,45 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 // ── Main sidebar component ──
 const Sidebar: React.FC<SidebarProps> = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const handleTab = useFocusTrap(sheetRef, !isCollapsed);
+
+  // Lock body scroll while the mobile sheet is open (works on iOS too)
+  useLockBodyScroll(!isCollapsed);
+
+  // Move focus to the close button when the sheet opens
+  useEffect(() => {
+    if (!isCollapsed) closeButtonRef.current?.focus();
+  }, [isCollapsed]);
+
+  // Close the mobile sheet with Escape
+  useEffect(() => {
+    if (isCollapsed) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsCollapsed(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isCollapsed]);
 
   return (
     <>
       {/* Toggle button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="fixed top-4 left-4 z-50 p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 md:hidden"
+        className={`fixed top-4 left-4 z-50 p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 md:hidden ${
+          isCollapsed ? "" : "hidden"
+        }`}
         style={{
           background: "var(--color-overlay)",
           color: "var(--color-text-secondary)",
         }}
-        aria-label={isCollapsed ? "Show sidebar" : "Hide sidebar"}
+        aria-label={isCollapsed ? "Show lists" : "Hide lists"}
       >
         <svg
           className="w-5 h-5"
@@ -349,25 +392,71 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         <SidebarContent {...props} />
       </aside>
 
-      {/* Mobile sidebar overlay */}
+      {/* Mobile bottom sheet overlay */}
       {!isCollapsed && (
         <div
-          className="fixed inset-0 z-40 md:hidden"
+          className="fixed inset-0 z-[100] md:hidden flex items-end justify-center"
           onClick={() => setIsCollapsed(true)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Lists"
         >
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            aria-hidden="true"
+          />
+
+          {/* Bottom sheet */}
           <aside
-            className="relative w-72 h-full border-r overflow-y-auto animate-slide-in"
+            ref={sheetRef}
+            onKeyDown={handleTab}
+            className="relative w-full max-h-[85vh] flex flex-col rounded-t-3xl border-t shadow-2xl overflow-hidden animate-slide-up pb-[env(safe-area-inset-bottom)]"
             style={{
               background: "var(--color-card)",
               borderColor: "var(--color-card-border)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <SidebarContent
-              {...props}
-              onCloseMobile={() => setIsCollapsed(true)}
-            />
+            {/* Sheet handle + close */}
+            <div
+              className="relative flex items-center justify-center p-3 shrink-0"
+            >
+              <div
+                className="w-12 h-1.5 rounded-full"
+                style={{ background: "var(--color-input-border)" }}
+              />
+              <button
+                ref={closeButtonRef}
+                type="button"
+                onClick={() => setIsCollapsed(true)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all duration-200 hover:scale-110"
+                style={{ color: "var(--color-text-secondary)" }}
+                aria-label="Close lists"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Scrollable list content */}
+            <div className="flex-1 overflow-y-auto">
+              <SidebarContent
+                {...props}
+                onCloseMobile={() => setIsCollapsed(true)}
+              />
+            </div>
           </aside>
         </div>
       )}

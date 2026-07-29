@@ -1,9 +1,10 @@
 import { useState, useEffect, type ReactNode } from "react";
-import { ThemeContext, type Theme } from "./ThemeContext";
+import { ThemeContext, type Theme } from "@/context/ThemeContext";
+import { STORAGE_KEYS } from "@/constants/app";
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("theme");
+    const saved = localStorage.getItem(STORAGE_KEYS.THEME);
     if (saved === "light" || saved === "dark") return saved;
     return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -11,7 +12,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   });
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
+    localStorage.setItem(STORAGE_KEYS.THEME, theme);
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 

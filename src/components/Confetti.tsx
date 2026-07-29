@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { TIMING, CONFETTI } from "@/constants/app";
 import confetti from "canvas-confetti";
 
 interface ConfettiProps {
@@ -14,23 +15,23 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({ trigger, onDone }) => {
       hasFired.current = true;
 
       // Fire confetti from both sides
-      const duration = 2000;
+      const duration = TIMING.CONFETTI_DURATION_MS;
       const end = Date.now() + duration;
 
       const frame = () => {
         confetti({
-          particleCount: 3,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0, y: 0.6 },
-          colors: ["#6366f1", "#ec4899", "#22c55e", "#f59e0b", "#3b82f6"],
+          particleCount: CONFETTI.PARTICLE_COUNT_PER_FRAME,
+          angle: CONFETTI.LEFT_ANGLE,
+          spread: CONFETTI.SPREAD,
+          origin: { x: 0, y: CONFETTI.ORIGIN_Y },
+          colors: [...CONFETTI.COLORS],
         });
         confetti({
-          particleCount: 3,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1, y: 0.6 },
-          colors: ["#6366f1", "#ec4899", "#22c55e", "#f59e0b", "#3b82f6"],
+          particleCount: CONFETTI.PARTICLE_COUNT_PER_FRAME,
+          angle: CONFETTI.RIGHT_ANGLE,
+          spread: CONFETTI.SPREAD,
+          origin: { x: 1, y: CONFETTI.ORIGIN_Y },
+          colors: [...CONFETTI.COLORS],
         });
 
         if (Date.now() < end) {
@@ -42,10 +43,10 @@ const ConfettiEffect: React.FC<ConfettiProps> = ({ trigger, onDone }) => {
 
       // Big burst
       confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ["#6366f1", "#ec4899", "#22c55e", "#f59e0b", "#3b82f6"],
+        particleCount: CONFETTI.BURST_PARTICLE_COUNT,
+        spread: CONFETTI.BURST_SPREAD,
+        origin: { y: CONFETTI.ORIGIN_Y },
+        colors: [...CONFETTI.COLORS],
       });
 
       frame();

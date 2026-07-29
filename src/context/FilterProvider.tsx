@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { FilterContext, type Filter } from "./FilterContext";
+import { FilterContext, type Filter } from "@/context/FilterContext";
 
 export const FilterProvider = ({ children }: { children: ReactNode }) => {
   const [filter, setFilter] = useState<Filter>("all");

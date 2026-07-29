@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
+import { PLACEHOLDERS } from "@/constants/app";
+
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -9,7 +11,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChange,
-  placeholder = "Search todos...",
+  placeholder = PLACEHOLDERS.SEARCH,
 }) => {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

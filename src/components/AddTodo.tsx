@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import type { Priority } from "../hooks/useTodos";
-import { SoundEffects } from "../hooks/useSoundEffects";
-
-const MAX_CHARS = 200;
+import type { Priority } from "@/hooks/useTodos";
+import { LIMITS } from "@/constants/app";
+import { SoundEffects } from "@/hooks/useSoundEffects";
 
 interface AddTodoProps {
   onAdd: (text: string, priority: Priority, dueDate: string | null) => void;
@@ -27,7 +26,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
   }, []);
 
   const charCount = text.length;
-  const isOverLimit = charCount > MAX_CHARS;
+  const isOverLimit = charCount > LIMITS.TODO_TEXT;
   const isValid = text.trim().length > 0 && !isOverLimit;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,7 +48,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
       ? "text-white/40 dark:text-white/30"
       : isOverLimit
         ? "text-red-400"
-        : charCount > MAX_CHARS * 0.8
+        : charCount > LIMITS.TODO_TEXT * 0.8
           ? "text-amber-300"
           : "text-white/50 dark:text-white/40";
 
@@ -75,7 +74,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="What needs to be done?"
-          maxLength={MAX_CHARS}
+          maxLength={LIMITS.TODO_TEXT}
           className="flex-1 px-4 py-2.5 bg-transparent rounded-lg focus:outline-none text-sm"
           style={{ color: "var(--color-text)" }}
         />
@@ -180,7 +179,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
       {/* Character counter */}
       {charCount > 0 && (
         <div className={`text-xs font-medium ${counterColor} animate-fade-in-up`} style={{ marginTop: "4px", textAlign: "right" }}>
-          {charCount}/{MAX_CHARS}
+          {charCount}/{LIMITS.TODO_TEXT}
         </div>
       )}
     </form>
