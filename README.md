@@ -81,8 +81,7 @@ src/
 │   └── useTodos.ts     # Todo state management hook
 ├── App.tsx             # Main application component
 ├── index.tsx           # Application entry point
-├── index.css           # Global styles and Tailwind imports
-└── react-app-env.d.ts  # TypeScript declarations
+└── index.css           # Global styles and Tailwind imports
 ```
 
 ## 🎯 Key Concepts Demonstrated
