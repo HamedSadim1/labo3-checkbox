@@ -17,7 +17,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
   // Keyboard shortcut: Ctrl+F or / to focus search
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.key === "/" || (e.key === "f" && (e.ctrlKey || e.metaKey))) && document.activeElement !== inputRef.current) {
+      if (
+        (e.key === "/" || (e.key === "f" && (e.ctrlKey || e.metaKey))) &&
+        document.activeElement !== inputRef.current
+      ) {
         e.preventDefault();
         inputRef.current?.focus();
       }
@@ -36,8 +39,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
     >
       {/* Search icon */}
       <svg
-        className="w-4 h-4 ml-3 flex-shrink-0"
-        style={{ color: value ? "var(--color-accent)" : "var(--color-text-secondary)" }}
+        className="w-4 h-4 ml-3 shrink-0"
+        style={{
+          color: value ? "var(--color-accent)" : "var(--color-text-secondary)",
+        }}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -84,8 +89,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
           style={{ color: "var(--color-text-secondary)" }}
           aria-label="Clear search"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
       )}

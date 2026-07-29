@@ -62,11 +62,18 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     }
   };
 
-  const getListCount = (listId: string) => todos.filter((t) => t.listId === listId).length;
-  const getListActiveCount = (listId: string) => todos.filter((t) => t.listId === listId && !t.completed).length;
+  const getListCount = (listId: string) =>
+    todos.filter((t) => t.listId === listId).length;
+  const getListActiveCount = (listId: string) =>
+    todos.filter((t) => t.listId === listId && !t.completed).length;
 
-  const handleDragStart = (id: string) => { draggedRef.current = id; };
-  const handleDragOver = (e: React.DragEvent, id: string) => { e.preventDefault(); setDragOverId(id); };
+  const handleDragStart = (id: string) => {
+    draggedRef.current = id;
+  };
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    setDragOverId(id);
+  };
   const handleDragLeave = () => setDragOverId(null);
 
   const handleDrop = (targetId: string) => {
@@ -94,7 +101,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         className="p-4 border-b flex items-center justify-between"
         style={{ borderColor: "var(--color-card-border)" }}
       >
-        <h2 className="text-sm font-bold tracking-tight" style={{ color: "var(--color-text)" }}>
+        <h2
+          className="text-sm font-bold tracking-tight"
+          style={{ color: "var(--color-text)" }}
+        >
           Lists
         </h2>
         <button
@@ -103,15 +113,28 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
           style={{ color: "var(--color-accent)" }}
           aria-label="Add list"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
           </svg>
         </button>
       </div>
 
       {/* Add list input */}
       {isAdding && (
-        <div className="p-3 border-b animate-fade-in-down" style={{ borderColor: "var(--color-card-border)" }}>
+        <div
+          className="p-3 border-b animate-fade-in-down"
+          style={{ borderColor: "var(--color-card-border)" }}
+        >
           <input
             ref={addInputRef}
             type="text"
@@ -119,12 +142,24 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAdd();
-              if (e.key === "Escape") { setIsAdding(false); setNewName(""); }
+              if (e.key === "Escape") {
+                setIsAdding(false);
+                setNewName("");
+              }
             }}
-            onBlur={() => { if (!newName.trim()) { setIsAdding(false); setNewName(""); } }}
+            onBlur={() => {
+              if (!newName.trim()) {
+                setIsAdding(false);
+                setNewName("");
+              }
+            }}
             placeholder="List name..."
             className="w-full px-3 py-2 text-sm rounded-lg focus:outline-none"
-            style={{ background: "var(--color-input-bg)", color: "var(--color-text)", border: "1px solid var(--color-input-border)" }}
+            style={{
+              background: "var(--color-input-bg)",
+              color: "var(--color-text)",
+              border: "1px solid var(--color-input-border)",
+            }}
           />
         </div>
       )}
@@ -147,14 +182,29 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               onDrop={() => handleDrop(list.id)}
               onClick={() => handleSelect(list.id)}
               className={`group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${isDragOver ? "scale-[1.02]" : ""}`}
-              style={{ background: isActive ? "var(--color-accent-light)" : "transparent" }}
-              onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "var(--color-overlay)"; }}
-              onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+              style={{
+                background: isActive
+                  ? "var(--color-accent-light)"
+                  : "transparent",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive)
+                  (e.currentTarget as HTMLElement).style.background =
+                    "var(--color-overlay)";
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive)
+                  (e.currentTarget as HTMLElement).style.background =
+                    "transparent";
+              }}
             >
               {/* Color dot */}
               <div
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0 transition-transform duration-200"
-                style={{ background: list.color, transform: isActive ? "scale(1.3)" : "scale(1)" }}
+                className="w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-200"
+                style={{
+                  background: list.color,
+                  transform: isActive ? "scale(1.3)" : "scale(1)",
+                }}
               />
 
               {/* Name */}
@@ -172,12 +222,20 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                     onBlur={handleRename}
                     onClick={(e) => e.stopPropagation()}
                     className="w-full px-2 py-0.5 text-sm rounded focus:outline-none"
-                    style={{ background: "var(--color-input-bg)", color: "var(--color-text)", border: "1px solid var(--color-accent)" }}
+                    style={{
+                      background: "var(--color-input-bg)",
+                      color: "var(--color-text)",
+                      border: "1px solid var(--color-accent)",
+                    }}
                   />
                 ) : (
                   <span
                     className="text-sm font-medium truncate block"
-                    style={{ color: isActive ? "var(--color-accent)" : "var(--color-text)" }}
+                    style={{
+                      color: isActive
+                        ? "var(--color-accent)"
+                        : "var(--color-text)",
+                    }}
                     onDoubleClick={(e) => {
                       e.stopPropagation();
                       setEditingId(list.id);
@@ -191,9 +249,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 
               {/* Count */}
               <span
-                className="text-xs font-medium px-1.5 py-0.5 rounded-md flex-shrink-0"
+                className="text-xs font-medium px-1.5 py-0.5 rounded-md shrink-0"
                 style={{
-                  background: isActive ? "var(--color-accent)" : "var(--color-overlay)",
+                  background: isActive
+                    ? "var(--color-accent)"
+                    : "var(--color-overlay)",
                   color: isActive ? "#fff" : "var(--color-text-secondary)",
                 }}
               >
@@ -203,13 +263,26 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               {/* Delete */}
               {lists.length > 1 && (
                 <button
-                  onClick={(e) => { e.stopPropagation(); onDelete(list.id); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(list.id);
+                  }}
                   className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all duration-200 hover:scale-110"
                   style={{ color: "var(--color-danger)" }}
                   aria-label={`Delete ${list.name}`}
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               )}
@@ -219,8 +292,14 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t" style={{ borderColor: "var(--color-card-border)" }}>
-        <p className="text-[10px] text-center" style={{ color: "var(--color-text-secondary)", opacity: 0.5 }}>
+      <div
+        className="p-3 border-t"
+        style={{ borderColor: "var(--color-card-border)" }}
+      >
+        <p
+          className="text-[10px] text-center"
+          style={{ color: "var(--color-text-secondary)", opacity: 0.5 }}
+        >
           Double-click to rename &middot; Drag to reorder
         </p>
       </div>
@@ -238,32 +317,57 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="fixed top-4 left-4 z-50 p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 md:hidden"
-        style={{ background: "var(--color-overlay)", color: "var(--color-text-secondary)" }}
+        style={{
+          background: "var(--color-overlay)",
+          color: "var(--color-text-secondary)",
+        }}
         aria-label={isCollapsed ? "Show sidebar" : "Hide sidebar"}
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isCollapsed ? "M4 6h16M4 12h16M4 18h16" : "M6 18L18 6M6 6l12 12"} />
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d={isCollapsed ? "M4 6h16M4 12h16M4 18h16" : "M6 18L18 6M6 6l12 12"}
+          />
         </svg>
       </button>
 
       {/* Desktop sidebar */}
       <aside
-        className="hidden md:flex flex-col w-64 flex-shrink-0 border-r h-full"
-        style={{ background: "var(--color-card)", borderColor: "var(--color-card-border)" }}
+        className="hidden md:flex flex-col w-64 shrink-0 border-r h-full"
+        style={{
+          background: "var(--color-card)",
+          borderColor: "var(--color-card-border)",
+        }}
       >
         <SidebarContent {...props} />
       </aside>
 
       {/* Mobile sidebar overlay */}
       {!isCollapsed && (
-        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setIsCollapsed(true)}>
+        <div
+          className="fixed inset-0 z-40 md:hidden"
+          onClick={() => setIsCollapsed(true)}
+        >
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           <aside
             className="relative w-72 h-full border-r overflow-y-auto animate-slide-in"
-            style={{ background: "var(--color-card)", borderColor: "var(--color-card-border)" }}
+            style={{
+              background: "var(--color-card)",
+              borderColor: "var(--color-card-border)",
+            }}
             onClick={(e) => e.stopPropagation()}
           >
-            <SidebarContent {...props} onCloseMobile={() => setIsCollapsed(true)} />
+            <SidebarContent
+              {...props}
+              onCloseMobile={() => setIsCollapsed(true)}
+            />
           </aside>
         </div>
       )}

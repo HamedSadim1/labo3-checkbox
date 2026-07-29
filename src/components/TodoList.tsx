@@ -1,4 +1,16 @@
-import { useState, useRef, useCallback } from "react";
+import { useCallback } from "react";
+import {
+  DndContext,
+  closestCenter,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import TodoItem from "./TodoItem";
 import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "../hooks/useTodos";
 import type { Filter } from "../context/FilterContext";
@@ -23,6 +35,81 @@ interface TodoListProps {
   onClearCompleted: () => void;
 }
 
+interface SortableItemProps {
+  todo: TodoItemType;
+  lists: TodoListMeta[];
+  onToggle: (id: number) => void;
+  onDelete: (id: number) => void;
+  onEdit: (id: number, newText: string) => void;
+  onUpdatePriority: (id: number, priority: Priority) => void;
+  onUpdateDueDate: (id: number, dueDate: string | null) => void;
+  onMoveToList: (todoId: number, listId: string) => void;
+  onDuplicate: (id: number) => void;
+  onToggleReminder: (id: number) => void;
+}
+
+const SortableItem: React.FC<SortableItemProps> = ({
+  todo,
+  lists,
+  onToggle,
+  onDelete,
+  onEdit,
+  onUpdatePriority,
+  onUpdateDueDate,
+  onMoveToList,
+  onDuplicate,
+  onToggleReminder,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: todo.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="relative group"
+    >
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="absolute -left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity duration-200 cursor-grab active:cursor-grabbing z-10 bg-transparent p-3 -m-3 rounded touch-manipulation"
+        style={{ color: "var(--color-text-secondary)" }}
+        aria-label="Drag to reorder"
+      >
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+        </svg>
+      </button>
+
+      <TodoItem
+        todo={todo}
+        lists={lists}
+        onToggle={onToggle}
+        onDelete={onDelete}
+        onEdit={onEdit}
+        onUpdatePriority={onUpdatePriority}
+        onUpdateDueDate={onUpdateDueDate}
+        onMoveToList={onMoveToList}
+        onDuplicate={onDuplicate}
+        onToggleReminder={onToggleReminder}
+      />
+    </div>
+  );
+};
+
 const TodoList: React.FC<TodoListProps> = ({
   todos,
   filteredTodos,
@@ -45,32 +132,22 @@ const TodoList: React.FC<TodoListProps> = ({
   const completedCount = todos.filter((t) => t.completed).length;
   const activeCount = totalCount - completedCount;
   const hasCompleted = completedCount > 0;
-  const [dragOverId, setDragOverId] = useState<number | null>(null);
-  const draggedId = useRef<number | null>(null);
 
-  // ── Drag & drop handlers ──
-  const handleDragStart = useCallback((id: number) => {
-    draggedId.current = id;
-  }, []);
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
 
-  const handleDragOver = useCallback((e: React.DragEvent, id: number) => {
-    e.preventDefault();
-    setDragOverId(id);
-  }, []);
-
-  const handleDrop = useCallback(
-    (targetId: number) => {
-      const sourceId = draggedId.current;
-      if (!sourceId || sourceId === targetId) return;
       const ids = filteredTodos.map((t) => t.id);
-      const srcIdx = ids.indexOf(sourceId);
-      const tgtIdx = ids.indexOf(targetId);
-      if (srcIdx === -1 || tgtIdx === -1) return;
-      ids.splice(srcIdx, 1);
-      ids.splice(tgtIdx, 0, sourceId);
-      onReorder(activeListId, ids);
-      setDragOverId(null);
-      draggedId.current = null;
+      const activeId = Number(active.id);
+      const overId = Number(over.id);
+      const oldIndex = ids.indexOf(activeId);
+      const newIndex = ids.indexOf(overId);
+
+      if (oldIndex === -1 || newIndex === -1) return;
+
+      const newIds = arrayMove(ids, oldIndex, newIndex);
+      onReorder(activeListId, newIds);
     },
     [filteredTodos, activeListId, onReorder]
   );
@@ -94,7 +171,7 @@ const TodoList: React.FC<TodoListProps> = ({
         </svg>
 
         <p className="text-base font-medium mb-1" style={{ color: "var(--color-text-secondary)" }}>
-          {searchQuery ? "No results found" : filter === "all" ? "No todos yet" : filter === "active" ? "All done! 🎉" : "No completed todos"}
+          {searchQuery ? "No results found" : filter === "all" ? "No todos yet" : filter === "active" ? "All done! " : "No completed todos"}
         </p>
         <p className="text-sm text-center" style={{ color: "var(--color-text-secondary)", opacity: 0.7 }}>
           {searchQuery ? `No todos match "${searchQuery}"` : filter === "all" ? "Add one above to get started!" : filter === "active" ? "Nothing left to do" : "Complete some todos to see them here"}
@@ -130,32 +207,18 @@ const TodoList: React.FC<TodoListProps> = ({
       )}
 
       {/* Todo list with drag & drop */}
-      <ul className="space-y-1.5">
-        {filteredTodos.map((todo) => (
-          <div
-            key={todo.id}
-            draggable
-            onDragStart={() => handleDragStart(todo.id)}
-            onDragOver={(e) => handleDragOver(e, todo.id)}
-            onDragLeave={() => setDragOverId(null)}
-            onDrop={() => handleDrop(todo.id)}
-            className={`group transition-all duration-200 ${
-              dragOverId === todo.id ? "scale-[1.02]" : ""
-            }`}
-            style={{ position: "relative" }}
-          >
-            {/* Drag handle indicator */}
-            <div
-              className="absolute -left-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-grab active:cursor-grabbing"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-              </svg>
-            </div>
-
-            <div className="relative">
-              <TodoItem
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={filteredTodos.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <ul className="space-y-1.5">
+            {filteredTodos.map((todo) => (
+              <SortableItem
+                key={todo.id}
                 todo={todo}
                 lists={lists}
                 onToggle={onToggle}
@@ -167,10 +230,10 @@ const TodoList: React.FC<TodoListProps> = ({
                 onDuplicate={onDuplicate}
                 onToggleReminder={onToggleReminder}
               />
-            </div>
-          </div>
-        ))}
-      </ul>
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
 
       {/* Footer */}
       {totalCount > 0 && (

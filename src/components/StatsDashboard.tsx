@@ -21,8 +21,18 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Total",
         value: stats.totalTodos,
         icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6"
+            />
           </svg>
         ),
         color: "var(--color-accent)",
@@ -31,8 +41,18 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Active",
         value: stats.activeTodos,
         icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
           </svg>
         ),
         color: "var(--color-text)",
@@ -41,8 +61,18 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Completed",
         value: stats.completedTodos,
         icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ),
         color: "var(--color-success)",
@@ -51,8 +81,18 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Overdue",
         value: stats.overdueTodos,
         icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         ),
         color: "var(--color-danger)",
@@ -62,8 +102,18 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Due Today",
         value: stats.dueTodayTodos,
         icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
           </svg>
         ),
         color: "var(--color-accent)",
@@ -79,10 +129,13 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "⚠ High Priority",
         value: stats.highPriorityActive,
         icon: null,
-        color: stats.highPriorityActive > 0 ? "#ef4444" : "var(--color-text-secondary)",
+        color:
+          stats.highPriorityActive > 0
+            ? "#ef4444"
+            : "var(--color-text-secondary)",
       } satisfies CardDef,
     ],
-    [stats]
+    [stats],
   ) satisfies CardDef[];
 
   return (
@@ -92,15 +145,23 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         <div className="relative w-20 h-20">
           <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
             <circle
-              cx="18" cy="18" r="15.5"
+              cx="18"
+              cy="18"
+              r="15.5"
               fill="none"
               stroke="var(--color-overlay)"
               strokeWidth="3"
             />
             <circle
-              cx="18" cy="18" r="15.5"
+              cx="18"
+              cy="18"
+              r="15.5"
               fill="none"
-              stroke={stats.completionRate === 100 ? "var(--color-success)" : "var(--color-accent)"}
+              stroke={
+                stats.completionRate === 100
+                  ? "var(--color-success)"
+                  : "var(--color-accent)"
+              }
               strokeWidth="3"
               strokeDasharray={`${stats.completionRate} ${100 - stats.completionRate}`}
               strokeLinecap="round"
@@ -108,7 +169,10 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-lg font-bold" style={{ color: "var(--color-text)" }}>
+            <span
+              className="text-lg font-bold"
+              style={{ color: "var(--color-text)" }}
+            >
               {stats.completionRate}%
             </span>
           </div>
@@ -127,20 +191,31 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
             }}
           >
             {card.icon && (
-              <div className="flex-shrink-0" style={{ color: card.color }}>
+              <div className="shrink-0" style={{ color: card.color }}>
                 {card.icon}
               </div>
             )}
             {!card.icon && (
-              <span className="text-base flex-shrink-0">{card.label.startsWith("🔥") ? "🔥" : "⚠"}</span>
+              <span className="text-base shrink-0">
+                {card.label.startsWith("🔥") ? "🔥" : "⚠"}
+              </span>
             )}
             <div className="min-w-0">
-              <p className="text-xs font-medium truncate" style={{ color: "var(--color-text-secondary)" }}>
+              <p
+                className="text-xs font-medium truncate"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
                 {card.label.replace("🔥 ", "").replace("⚠ ", "")}
-              </p>                <p className="text-sm font-bold" style={{ color: card.urgent ? card.color : "var(--color-text)" }}>
-                  {card.value}
-                  {'suffix' in card && card.suffix ? ` ${card.suffix}` : ""}
-                </p>
+              </p>{" "}
+              <p
+                className="text-sm font-bold"
+                style={{
+                  color: card.urgent ? card.color : "var(--color-text)",
+                }}
+              >
+                {card.value}
+                {"suffix" in card && card.suffix ? ` ${card.suffix}` : ""}
+              </p>
             </div>
           </div>
         ))}

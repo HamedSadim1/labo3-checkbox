@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "../hooks/useTodos";
+import type {
+  TodoItem as TodoItemType,
+  Priority,
+  TodoListMeta,
+} from "../hooks/useTodos";
 import { SoundEffects } from "../hooks/useSoundEffects";
 
 interface TodoItemProps {
@@ -15,7 +19,10 @@ interface TodoItemProps {
   onDuplicate: (id: number) => void;
 }
 
-const priorityConfig: Record<Priority, { color: string; bg: string; label: string }> = {
+const priorityConfig: Record<
+  Priority,
+  { color: string; bg: string; label: string }
+> = {
   low: { color: "#22c55e", bg: "rgba(34, 197, 94, 0.12)", label: "Low" },
   medium: { color: "#f59e0b", bg: "rgba(245, 158, 11, 0.12)", label: "Med" },
   high: { color: "#ef4444", bg: "rgba(239, 68, 68, 0.12)", label: "High" },
@@ -41,7 +48,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
   const [isSwiping, setIsSwiping] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
   const touchStartX = useRef(0);
-  const itemRef = useRef<HTMLLIElement>(null);
+  const itemRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isEditing) {
@@ -118,9 +125,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
     const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
     const due = new Date(todo.dueDate + "T00:00:00");
 
-    if (todo.dueDate < today) return { text: `Overdue (${todo.dueDate})`, urgent: true };
+    if (todo.dueDate < today)
+      return { text: `Overdue (${todo.dueDate})`, urgent: true };
     if (todo.dueDate === today) return { text: "Due today", urgent: true };
-    if (todo.dueDate === tomorrow) return { text: "Due tomorrow", urgent: false };
+    if (todo.dueDate === tomorrow)
+      return { text: "Due tomorrow", urgent: false };
 
     // eslint-disable-next-line react-hooks/purity
     const days = Math.ceil((due.getTime() - Date.now()) / 86400000);
@@ -130,18 +139,18 @@ const TodoItem: React.FC<TodoItemProps> = ({
   const priorityInfo = priorityConfig[todo.priority];
 
   return (
-    <li
+    <div
       ref={itemRef}
       className={`flex items-center gap-2 p-3 rounded-xl border transition-all duration-200 group ${
         isExiting ? "animate-slide-out" : "animate-slide-in"
       } ${isSwiping ? "" : ""}`}
       style={{
-        background: todo.completed
-          ? "var(--color-overlay)"
-          : "transparent",
+        background: todo.completed ? "var(--color-overlay)" : "transparent",
         borderColor: "var(--color-input-border)",
         transform: `translateX(${swipeOffset}px)`,
-        transition: isSwiping ? "none" : "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        transition: isSwiping
+          ? "none"
+          : "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
         opacity: todo.completed ? 0.7 : 1,
       }}
       onTouchStart={handleTouchStart}
@@ -199,23 +208,46 @@ const TodoItem: React.FC<TodoItemProps> = ({
             <span
               className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium"
               style={{
-                color: dueInfo.urgent ? "var(--color-danger)" : "var(--color-text-secondary)",
-                background: dueInfo.urgent ? "rgba(239, 68, 68, 0.1)" : "var(--color-overlay)",
+                color: dueInfo.urgent
+                  ? "var(--color-danger)"
+                  : "var(--color-text-secondary)",
+                background: dueInfo.urgent
+                  ? "rgba(239, 68, 68, 0.1)"
+                  : "var(--color-overlay)",
               }}
             >
               {/* Bell icon when reminder is enabled */}
               {todo.reminderEnabled && (
-                <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24" style={{ color: dueInfo.urgent ? "var(--color-danger)" : "var(--color-accent)" }}>
+                <svg
+                  className="w-2.5 h-2.5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  style={{
+                    color: dueInfo.urgent
+                      ? "var(--color-danger)"
+                      : "var(--color-accent)",
+                  }}
+                >
                   <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
                 </svg>
               )}
-              <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                className="w-2.5 h-2.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
               {dueInfo.text}
             </span>
           )}
-          
+
           {/* List badge (if viewing all lists) */}
           {lists.length > 1 && (
             <span
@@ -248,7 +280,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
           />
         ) : (
           <span
-            className={`text-sm cursor-pointer block break-words ${
+            className={`text-sm cursor-pointer block wrap-break-word ${
               todo.completed ? "line-through" : ""
             }`}
             style={{
@@ -265,7 +297,9 @@ const TodoItem: React.FC<TodoItemProps> = ({
       </div>
 
       {/* Action buttons */}
-      <div className={`flex items-center gap-0.5 transition-all duration-200 ${showActions ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"}`}>
+      <div
+        className={`flex items-center gap-0.5 transition-all duration-200 ${showActions ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"}`}
+      >
         {/* More actions dropdown */}
         <div className="relative">
           <button
@@ -274,15 +308,28 @@ const TodoItem: React.FC<TodoItemProps> = ({
             style={{ color: "var(--color-text-secondary)" }}
             aria-label="More actions"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 5v.01M12 12v.01M12 19v.01"
+              />
             </svg>
           </button>
 
           {/* Dropdown menu */}
           {showActions && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowActions(false)} />
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowActions(false)}
+              />
               <div
                 className="absolute right-0 bottom-full mb-1 z-20 w-44 rounded-xl border shadow-xl overflow-hidden animate-fade-in-up"
                 style={{
@@ -291,18 +338,38 @@ const TodoItem: React.FC<TodoItemProps> = ({
                 }}
               >
                 {/* Change priority */}
-                <div className="p-2 border-b" style={{ borderColor: "var(--color-card-border)" }}>
-                  <p className="text-[10px] font-medium mb-1 px-2" style={{ color: "var(--color-text-secondary)" }}>Priority</p>
+                <div
+                  className="p-2 border-b"
+                  style={{ borderColor: "var(--color-card-border)" }}
+                >
+                  <p
+                    className="text-[10px] font-medium mb-1 px-2"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
+                    Priority
+                  </p>
                   <div className="flex gap-1">
-                    {(Object.entries(priorityConfig) as [Priority, typeof priorityConfig.low][]).map(([key, cfg]) => (
+                    {(
+                      Object.entries(priorityConfig) as [
+                        Priority,
+                        typeof priorityConfig.low,
+                      ][]
+                    ).map(([key, cfg]) => (
                       <button
                         key={key}
-                        onClick={() => { onUpdatePriority(todo.id, key); setShowActions(false); }}
+                        onClick={() => {
+                          onUpdatePriority(todo.id, key);
+                          setShowActions(false);
+                        }}
                         className="flex-1 px-2 py-1 rounded text-[10px] font-semibold transition-all duration-200"
                         style={{
-                          background: todo.priority === key ? cfg.bg : "transparent",
+                          background:
+                            todo.priority === key ? cfg.bg : "transparent",
                           color: cfg.color,
-                          border: todo.priority === key ? `1px solid ${cfg.color}44` : "1px solid transparent",
+                          border:
+                            todo.priority === key
+                              ? `1px solid ${cfg.color}44`
+                              : "1px solid transparent",
                         }}
                       >
                         {cfg.label}
@@ -312,36 +379,75 @@ const TodoItem: React.FC<TodoItemProps> = ({
                 </div>
 
                 {/* Set due date */}
-                <div className="p-2 border-b" style={{ borderColor: "var(--color-card-border)" }}>
-                  <p className="text-[10px] font-medium mb-1 px-2" style={{ color: "var(--color-text-secondary)" }}>Due Date</p>
+                <div
+                  className="p-2 border-b"
+                  style={{ borderColor: "var(--color-card-border)" }}
+                >
+                  <p
+                    className="text-[10px] font-medium mb-1 px-2"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
+                    Due Date
+                  </p>
                   <div className="flex gap-1">
                     <input
                       type="date"
                       value={todo.dueDate ?? ""}
-                      onChange={(e) => { onUpdateDueDate(todo.id, e.target.value || null); setShowActions(false); }}
+                      onChange={(e) => {
+                        onUpdateDueDate(todo.id, e.target.value || null);
+                        setShowActions(false);
+                      }}
                       className="flex-1 px-2 py-1 rounded text-xs focus:outline-none"
-                      style={{ background: "var(--color-input-bg)", color: "var(--color-text)", border: "1px solid var(--color-input-border)" }}
+                      style={{
+                        background: "var(--color-input-bg)",
+                        color: "var(--color-text)",
+                        border: "1px solid var(--color-input-border)",
+                      }}
                     />
                     {todo.dueDate && (
                       <button
-                        onClick={() => { onToggleReminder(todo.id); setShowActions(false); }}
+                        onClick={() => {
+                          onToggleReminder(todo.id);
+                          setShowActions(false);
+                        }}
                         className={`px-2 py-1 rounded text-xs font-medium transition-all duration-200 ${
                           todo.reminderEnabled ? "ring-2" : ""
                         }`}
                         style={{
-                          background: todo.reminderEnabled ? "var(--color-accent-light)" : "var(--color-overlay)",
-                          color: todo.reminderEnabled ? "var(--color-accent)" : "var(--color-text-secondary)",
+                          background: todo.reminderEnabled
+                            ? "var(--color-accent-light)"
+                            : "var(--color-overlay)",
+                          color: todo.reminderEnabled
+                            ? "var(--color-accent)"
+                            : "var(--color-text-secondary)",
                         }}
-                        title={todo.reminderEnabled ? "Notifications enabled" : "Enable notifications"}
+                        title={
+                          todo.reminderEnabled
+                            ? "Notifications enabled"
+                            : "Enable notifications"
+                        }
                       >
-                        <svg className="w-3.5 h-3.5" fill={todo.reminderEnabled ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill={todo.reminderEnabled ? "currentColor" : "none"}
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
                         </svg>
                       </button>
                     )}
                   </div>
                   {todo.reminderEnabled && todo.dueDate && (
-                    <p className="text-[9px] mt-1 px-1" style={{ color: "var(--color-accent)" }}>
+                    <p
+                      className="text-[9px] mt-1 px-1"
+                      style={{ color: "var(--color-accent)" }}
+                    >
                       🔔 Notification enabled
                     </p>
                   )}
@@ -349,30 +455,55 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
                 {/* Move to list */}
                 {lists.length > 1 && (
-                  <div className="p-2 border-b" style={{ borderColor: "var(--color-card-border)" }}>
-                    <p className="text-[10px] font-medium mb-1 px-2" style={{ color: "var(--color-text-secondary)" }}>Move to</p>
-                    {lists.filter((l) => l.id !== todo.listId).map((list) => (
-                      <button
-                        key={list.id}
-                        onClick={() => { onMoveToList(todo.id, list.id); setShowActions(false); }}
-                        className="w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200"
-                        style={{ color: "var(--color-text)" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-overlay)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                      >
-                        → {list.name}
-                      </button>
-                    ))}
+                  <div
+                    className="p-2 border-b"
+                    style={{ borderColor: "var(--color-card-border)" }}
+                  >
+                    <p
+                      className="text-[10px] font-medium mb-1 px-2"
+                      style={{ color: "var(--color-text-secondary)" }}
+                    >
+                      Move to
+                    </p>
+                    {lists
+                      .filter((l) => l.id !== todo.listId)
+                      .map((list) => (
+                        <button
+                          key={list.id}
+                          onClick={() => {
+                            onMoveToList(todo.id, list.id);
+                            setShowActions(false);
+                          }}
+                          className="w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200"
+                          style={{ color: "var(--color-text)" }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background =
+                              "var(--color-overlay)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = "transparent")
+                          }
+                        >
+                          → {list.name}
+                        </button>
+                      ))}
                   </div>
                 )}
 
                 {/* Duplicate */}
                 <button
-                  onClick={() => { onDuplicate(todo.id); setShowActions(false); }}
+                  onClick={() => {
+                    onDuplicate(todo.id);
+                    setShowActions(false);
+                  }}
                   className="w-full text-left px-4 py-2 text-xs transition-all duration-200"
                   style={{ color: "var(--color-text)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-overlay)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "var(--color-overlay)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
                 >
                   Duplicate
                 </button>
@@ -403,7 +534,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
           </svg>
         </button>
       </div>
-    </li>
+    </div>
   );
 };
 
