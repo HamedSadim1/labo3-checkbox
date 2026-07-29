@@ -47,6 +47,8 @@ function App() {
     toggleReminder,
     undoTodo,
     undoDelete,
+    undoCompleted,
+    undoClearCompleted,
     replaceData,
     importSuccess,
     setImportSuccess,
@@ -401,7 +403,31 @@ function App() {
         </div>
       )}
 
-      {/* Undo toast */}
+      {/* Undo clear completed toast */}
+      {undoCompleted && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 animate-toast-in">
+          <div
+            className="flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl border"
+            style={{ background: "var(--color-toast-bg)", color: "var(--color-toast-text)", borderColor: "rgba(255,255,255,0.1)" }}
+          >
+            <svg className="w-4 h-4" style={{ color: "var(--color-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span className="text-sm">
+              Cleared {undoCompleted.length} completed {undoCompleted.length === 1 ? "todo" : "todos"}
+            </span>
+            <button
+              onClick={undoClearCompleted}
+              className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+              style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
+            >
+              Undo
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Undo delete toast */}
       {undoTodo && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-toast-in">
           <div

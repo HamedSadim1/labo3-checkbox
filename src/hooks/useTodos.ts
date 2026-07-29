@@ -119,7 +119,9 @@ export const useTodos = () => {
   const importSuccessTimeoutRef = useRef<number | null>(null);
 
   const [undoItem, setUndoItem] = useState<{ todo: TodoItem; listId: string } | null>(null);
+  const [undoCompleted, setUndoCompleted] = useState<TodoItem[] | null>(null);
   const undoTimeoutRef = useRef<number | null>(null);
+  const undoCompletedTimeoutRef = useRef<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   // ── Persist ──
@@ -134,6 +136,7 @@ export const useTodos = () => {
   useEffect(() => {
     return () => {
       if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+      if (undoCompletedTimeoutRef.current) clearTimeout(undoCompletedTimeoutRef.current);
       if (importSuccessTimeoutRef.current) clearTimeout(importSuccessTimeoutRef.current);
     };
   }, []);
@@ -274,6 +277,23 @@ export const useTodos = () => {
     }, 4000);
   }, []);
 
+  const undoClearCompleted = useCallback(() => {
+    if (undoCompleted) {
+      setData((prev) => {
+        // Don't add todos that already exist
+        const existingIds = new Set(prev.todos.map((t) => t.id));
+        const toRestore = undoCompleted.filter((t) => !existingIds.has(t.id));
+        if (toRestore.length === 0) return prev;
+        return { ...prev, todos: [...prev.todos, ...toRestore] };
+      });
+      setUndoCompleted(null);
+      if (undoCompletedTimeoutRef.current) {
+        clearTimeout(undoCompletedTimeoutRef.current);
+        undoCompletedTimeoutRef.current = null;
+      }
+    }
+  }, [undoCompleted]);
+
   const undoDelete = useCallback(() => {
     if (undoItem) {
       setData((prev) => {
@@ -335,6 +355,22 @@ export const useTodos = () => {
   }, []);
 
   const clearCompleted = useCallback(() => {
+    const completedToRemove = dataRef.current.todos.filter(
+      (t) => t.listId === dataRef.current.activeListId && t.completed
+    );
+    if (completedToRemove.length === 0) return;
+
+    // Clear any pending timeout
+    if (undoCompletedTimeoutRef.current) {
+      clearTimeout(undoCompletedTimeoutRef.current);
+    }
+
+    setUndoCompleted(completedToRemove);
+    undoCompletedTimeoutRef.current = window.setTimeout(() => {
+      setUndoCompleted(null);
+      undoCompletedTimeoutRef.current = null;
+    }, 4000);
+
     setData((prev) => ({
       ...prev,
       todos: prev.todos.filter((t) => t.listId !== prev.activeListId || !t.completed),
@@ -387,6 +423,8 @@ export const useTodos = () => {
     allCompletedInActiveList,
     undoTodo: undoItem?.todo ?? null,
     undoDelete,
+    undoCompleted,
+    undoClearCompleted,
 
     // List operations
     addList,
