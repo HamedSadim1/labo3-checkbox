@@ -59,7 +59,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
     <form onSubmit={handleSubmit} className="mb-5">
       {/* Input row */}
       <div
-        className="flex gap-2 p-1.5 rounded-xl border-2 transition-all duration-200"
+        className="flex flex-wrap md:flex-nowrap gap-2 p-1.5 rounded-xl border-2 transition-all duration-200"
         style={{
           borderColor: isOverLimit
             ? "var(--color-danger)"

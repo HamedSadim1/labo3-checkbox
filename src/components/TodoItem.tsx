@@ -143,7 +143,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       ref={itemRef}
       className={`flex items-center gap-2 p-3 rounded-xl border transition-all duration-200 group ${
         isExiting ? "animate-slide-out" : "animate-slide-in"
-      } ${isSwiping ? "" : ""}`}
+      } ${isSwiping ? "" : ""} ${!isEditing ? "cursor-pointer hover:bg-black/5" : ""}`}
       style={{
         background: todo.completed ? "var(--color-overlay)" : "transparent",
         borderColor: "var(--color-input-border)",
@@ -156,6 +156,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onClick={!isEditing ? handleToggle : undefined}
     >
       {/* Swipe delete indicator */}
       {swipeOffset < -20 && (
@@ -169,8 +170,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
       {/* Custom checkbox */}
       <button
-        onClick={handleToggle}
-        className={`checkbox-custom ${todo.completed ? "checked" : ""}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleToggle();
+        }}
+        className={`checkbox-custom p-1.5 ${todo.completed ? "checked" : ""}`}
         aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
       >
         {todo.completed && (
@@ -191,7 +195,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       {/* Content */}
       <div className="flex-1 min-w-0">
         {/* Priority badge + Due date */}
-        <div className="flex items-center gap-1.5 mb-0.5">
+        <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
           {!todo.completed && (
             <span
               className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider"
@@ -271,6 +275,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
             onChange={(e) => setEditText(e.target.value)}
             onBlur={handleEditSubmit}
             onKeyDown={handleEditKeyDown}
+            onClick={(e) => e.stopPropagation()}
             className="w-full px-3 py-1.5 rounded-lg border text-sm focus:outline-none"
             style={{
               color: "var(--color-text)",
@@ -298,13 +303,16 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
       {/* Action buttons */}
       <div
-        className={`flex items-center gap-0.5 transition-all duration-200 ${showActions ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"}`}
+        className={`flex items-center gap-1 transition-all duration-200 ${showActions ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"}`}
       >
         {/* More actions dropdown */}
         <div className="relative">
           <button
-            onClick={() => setShowActions(!showActions)}
-            className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowActions(!showActions);
+            }}
+            className="p-3 rounded-lg transition-all duration-200 hover:scale-110"
             style={{ color: "var(--color-text-secondary)" }}
             aria-label="More actions"
           >
@@ -328,7 +336,10 @@ const TodoItem: React.FC<TodoItemProps> = ({
             <>
               <div
                 className="fixed inset-0 z-10"
-                onClick={() => setShowActions(false)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowActions(false);
+                }}
               />
               <div
                 className="absolute right-0 bottom-full mb-1 z-20 w-44 rounded-xl border shadow-xl overflow-hidden animate-fade-in-up"
@@ -336,6 +347,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
                   background: "var(--color-card)",
                   borderColor: "var(--color-card-border)",
                 }}
+                onClick={(e) => e.stopPropagation()}
               >
                 {/* Change priority */}
                 <div
@@ -361,7 +373,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
                           onUpdatePriority(todo.id, key);
                           setShowActions(false);
                         }}
-                        className="flex-1 px-2 py-1 rounded text-[10px] font-semibold transition-all duration-200"
+                        className="flex-1 px-3 py-2 rounded text-[10px] font-semibold transition-all duration-200"
                         style={{
                           background:
                             todo.priority === key ? cfg.bg : "transparent",
@@ -410,7 +422,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
                           onToggleReminder(todo.id);
                           setShowActions(false);
                         }}
-                        className={`px-2 py-1 rounded text-xs font-medium transition-all duration-200 ${
+                        className={`px-3 py-2 rounded text-xs font-medium transition-all duration-200 ${
                           todo.reminderEnabled ? "ring-2" : ""
                         }`}
                         style={{
@@ -474,7 +486,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
                             onMoveToList(todo.id, list.id);
                             setShowActions(false);
                           }}
-                          className="w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200"
+                          className="w-full text-left px-3 py-2 rounded text-xs transition-all duration-200"
                           style={{ color: "var(--color-text)" }}
                           onMouseEnter={(e) =>
                             (e.currentTarget.style.background =
@@ -496,7 +508,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
                     onDuplicate(todo.id);
                     setShowActions(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-xs transition-all duration-200"
+                  className="w-full text-left px-4 py-3 text-xs transition-all duration-200"
                   style={{ color: "var(--color-text)" }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.background = "var(--color-overlay)")
@@ -514,8 +526,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
         {/* Delete button */}
         <button
-          onClick={handleDelete}
-          className="p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:bg-red-500/10"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete();
+          }}
+          className="p-3 rounded-lg transition-all duration-200 hover:scale-110 hover:bg-red-500/10"
           style={{ color: "var(--color-danger)" }}
           aria-label="Delete todo"
         >

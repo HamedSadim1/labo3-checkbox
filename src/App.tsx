@@ -129,13 +129,13 @@ function App() {
       />
 
       {/* Main content */}
-      <div className="flex-1 flex items-start justify-center p-4 md:p-6 overflow-y-auto">
-        <div className="w-full max-w-xl mt-4 md:mt-8">
+      <div className="flex-1 flex items-start justify-center p-4 md:p-6 pt-14 md:pt-6 overflow-y-auto">
+        <div className="w-full max-w-xl mt-4 md:mt-8 pl-12 md:pl-0">
           {/* Header */}
           <div className="flex items-center justify-between mb-5 animate-fade-in-down">
-            <div>
+            <div className="min-w-0">
               <h1
-                className="text-2xl md:text-3xl font-bold tracking-tight"
+                className="text-2xl md:text-3xl font-bold tracking-tight truncate"
                 style={{ color: "var(--color-text)" }}
               >
                 {activeList.name}
@@ -146,7 +146,7 @@ function App() {
             </div>
 
             {/* Action buttons */}
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap justify-end items-center gap-1">
               {/* Notification bell badge */}
               <div className="relative">
                 <button
