@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import type { TodoListMeta, TodoItem } from "@/hooks/useTodos";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { PLACEHOLDERS } from "@/constants/app";
+import { PLACEHOLDERS, TIMING } from "@/constants/app";
 import { getListCount, getListActiveCount } from "@/utils/todos";
 
 interface SidebarProps {
@@ -328,19 +328,31 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
-  const handleTab = useFocusTrap(sheetRef, !isCollapsed);
+  const [internalOpen, setInternalOpen] = useState(false);
 
-  // Lock body scroll while the mobile sheet is open (works on iOS too)
-  useLockBodyScroll(!isCollapsed);
-
-  // Move focus to the close button when the sheet opens
   useEffect(() => {
-    if (!isCollapsed) closeButtonRef.current?.focus();
-  }, [isCollapsed]);
+    if (!isCollapsed) {
+      // Opening: render immediately with entry animation
+      const id = window.setTimeout(() => setInternalOpen(true), 0);
+      return () => window.clearTimeout(id);
+    }
+    if (internalOpen) {
+      // Closing: keep rendered for exit animation, then unmount
+      const id = window.setTimeout(() => setInternalOpen(false), TIMING.MODAL_CLOSE_FALLBACK_MS);
+      return () => window.clearTimeout(id);
+    }
+  }, [isCollapsed, internalOpen]);
+
+  const closing = isCollapsed && internalOpen;
+  const isVisible = !isCollapsed || closing;
+
+  const handleTab = useFocusTrap(sheetRef, isVisible);
+  // Lock body scroll while the sheet is visible (open or animating out)
+  useLockBodyScroll(isVisible);
 
   // Close the mobile sheet with Escape
   useEffect(() => {
-    if (isCollapsed) return;
+    if (!isVisible) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -350,7 +362,15 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isCollapsed]);
+  }, [isVisible]);
+
+  const handleAnimationEnd = () => {
+    if (closing) {
+      setInternalOpen(false);
+    }
+  };
+
+
 
   return (
     <>
@@ -393,17 +413,19 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       </aside>
 
       {/* Mobile bottom sheet overlay */}
-      {!isCollapsed && (
+      {isVisible && (
         <div
           className="fixed inset-0 z-[100] md:hidden flex items-end justify-center"
-          onClick={() => setIsCollapsed(true)}
+          onClick={() => { if (!closing) setIsCollapsed(true); }}
           role="dialog"
           aria-modal="true"
           aria-label="Lists"
         >
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+            className={`absolute inset-0 bg-black/50 backdrop-blur-sm ${
+              closing ? "animate-backdrop-out" : "animate-backdrop"
+            }`}
             aria-hidden="true"
           />
 
@@ -411,7 +433,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
           <aside
             ref={sheetRef}
             onKeyDown={handleTab}
-            className="relative w-full max-h-[85vh] flex flex-col rounded-t-3xl border-t shadow-2xl overflow-hidden animate-slide-up pb-[env(safe-area-inset-bottom)]"
+            onAnimationEnd={handleAnimationEnd}
+            className={`relative w-full max-h-[85vh] flex flex-col rounded-t-3xl border-t shadow-2xl overflow-hidden pb-[env(safe-area-inset-bottom)] ${
+              closing ? "animate-slide-down" : "animate-slide-up"
+            }`}
             style={{
               background: "var(--color-card)",
               borderColor: "var(--color-card-border)",

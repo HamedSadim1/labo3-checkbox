@@ -2,16 +2,17 @@ import { useState, useRef, useEffect } from "react";
 import type { Priority } from "@/hooks/useTodos";
 import { LIMITS } from "@/constants/app";
 import { SoundEffects } from "@/hooks/useSoundEffects";
+import { priorityConfig } from "@/constants/priorities";
 
 interface AddTodoProps {
   onAdd: (text: string, priority: Priority, dueDate: string | null) => void;
 }
 
-const priorities: { value: Priority; label: string; color: string }[] = [
-  { value: "low", label: "Low", color: "#22c55e" },
-  { value: "medium", label: "Med", color: "#f59e0b" },
-  { value: "high", label: "High", color: "#ef4444" },
-];
+const priorities = (Object.keys(priorityConfig) as Priority[]).map((value) => ({
+  value,
+  label: priorityConfig[value].label,
+  color: priorityConfig[value].color,
+}));
 
 const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
   const [text, setText] = useState("");
