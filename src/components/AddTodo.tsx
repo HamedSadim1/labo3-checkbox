@@ -179,7 +179,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
 
       {/* Character counter */}
       {charCount > 0 && (
-        <div className={`absolute -bottom-5 right-1 text-xs font-medium ${counterColor} animate-fade-in-up`} style={{ position: "relative", marginTop: "4px" }}>
+        <div className={`text-xs font-medium ${counterColor} animate-fade-in-up`} style={{ marginTop: "4px", textAlign: "right" }}>
           {charCount}/{MAX_CHARS}
         </div>
       )}

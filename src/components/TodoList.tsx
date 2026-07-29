@@ -139,7 +139,7 @@ const TodoList: React.FC<TodoListProps> = ({
             onDragOver={(e) => handleDragOver(e, todo.id)}
             onDragLeave={() => setDragOverId(null)}
             onDrop={() => handleDrop(todo.id)}
-            className={`transition-all duration-200 ${
+            className={`group transition-all duration-200 ${
               dragOverId === todo.id ? "scale-[1.02]" : ""
             }`}
             style={{ position: "relative" }}
@@ -154,7 +154,7 @@ const TodoList: React.FC<TodoListProps> = ({
               </svg>
             </div>
 
-            <div className="group relative">
+            <div className="relative">
               <TodoItem
                 todo={todo}
                 lists={lists}
