@@ -1,4 +1,5 @@
 import type { FC, ReactNode, CSSProperties } from "react";
+import { cn } from "@/utils/cn";
 
 interface IconButtonProps {
   onClick: () => void;
@@ -25,7 +26,10 @@ const IconButton: FC<IconButtonProps> = ({
     <button
       type={type}
       onClick={onClick}
-      className={`p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 ${className}`}
+      className={cn(
+        "p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95",
+        className,
+      )}
       style={{
         background: isActive ? "var(--color-accent-light)" : "var(--color-overlay)",
         color: isActive ? "var(--color-accent)" : "var(--color-text-secondary)",

@@ -12,7 +12,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import TodoItem from "@/components/TodoItem";
-import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "@/hooks/useTodos";
+import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "@/types";
 import type { Filter } from "@/context/FilterContext";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 

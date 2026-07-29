@@ -3,11 +3,12 @@ import type {
   TodoItem as TodoItemType,
   Priority,
   TodoListMeta,
-} from "@/hooks/useTodos";
+} from "@/types";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 import { priorityConfig } from "@/constants/priorities";
 import { TIMING, SWIPE } from "@/constants/app";
 import { formatDueInfo } from "@/utils/date";
+import { cn } from "@/utils/cn";
 
 interface TodoItemProps {
   todo: TodoItemType;
@@ -235,9 +236,10 @@ const TodoItem: React.FC<TodoItemProps> = ({
                         onToggleReminder(todo.id);
                         setShowActions(false);
                       }}
-                      className={`px-3 py-2 rounded text-xs font-medium transition-all duration-200 ${
-                        todo.reminderEnabled ? "ring-2" : ""
-                      }`}
+                      className={cn(
+                        "px-3 py-2 rounded text-xs font-medium transition-all duration-200",
+                        todo.reminderEnabled && "ring-2",
+                      )}
                       style={{
                         background: todo.reminderEnabled
                           ? "var(--color-accent-light)"
@@ -367,9 +369,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
   return (
     <div
       ref={itemRef}
-      className={`relative flex flex-col md:flex-row gap-2 md:gap-3 p-3 md:p-4 rounded-xl border transition-all duration-200 group ${
-        isExiting ? "animate-slide-out" : "animate-slide-in"
-      } ${!isEditing ? "cursor-pointer hover:bg-black/5" : ""}`}
+      className={cn(
+        "relative flex flex-col md:flex-row gap-2 md:gap-3 p-3 md:p-4 rounded-xl border transition-all duration-200 group",
+        isExiting ? "animate-slide-out" : "animate-slide-in",
+        !isEditing && "cursor-pointer hover:bg-black/5",
+      )}
       style={{
         background: todo.completed ? "var(--color-overlay)" : "transparent",
         borderColor: "var(--color-input-border)",
@@ -402,7 +406,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
             e.stopPropagation();
             handleToggle();
           }}
-          className={`checkbox-custom p-1.5 ${todo.completed ? "checked" : ""}`}
+          className={cn("checkbox-custom p-1.5", todo.completed && "checked")}
           aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
         >
           {todo.completed && (
@@ -441,9 +445,10 @@ const TodoItem: React.FC<TodoItemProps> = ({
             />
           ) : (
             <span
-              className={`w-full text-base md:text-sm leading-snug cursor-pointer block break-words whitespace-normal ${
-                todo.completed ? "line-through" : ""
-              }`}
+              className={cn(
+                "w-full text-base md:text-sm leading-snug cursor-pointer block break-words whitespace-normal",
+                todo.completed && "line-through",
+              )}
               style={{
                 color: todo.completed
                   ? "var(--color-text-secondary)"
@@ -545,9 +550,10 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
         {/* Desktop actions */}
         <div
-          className={`hidden md:flex items-center gap-1 transition-all duration-200 ${
-            showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
+          className={cn(
+            "hidden md:flex items-center gap-1 transition-all duration-200",
+            showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+          )}
         >
           {actionButtons}
         </div>

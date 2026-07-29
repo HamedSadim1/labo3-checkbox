@@ -1,6 +1,6 @@
 import { LIST_COLORS } from "@/constants/colors";
 import { TIMING } from "@/constants/app";
-import type { TodoData } from "@/hooks/useTodos";
+import type { TodoData } from "@/types";
 
 export const defaultData: TodoData = {
   lists: [

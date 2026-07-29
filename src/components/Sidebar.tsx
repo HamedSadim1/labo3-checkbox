@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import type { TodoListMeta, TodoItem } from "@/hooks/useTodos";
+import type { TodoListMeta, TodoItem } from "@/types";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { PLACEHOLDERS, TIMING } from "@/constants/app";
 import { getListCount, getListActiveCount } from "@/utils/todos";
+import { cn } from "@/utils/cn";
 
 interface SidebarProps {
   lists: TodoListMeta[];
@@ -194,7 +195,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
               role="listitem"
               aria-label={`Select list ${list.name}${isActive ? " (current)" : ""}`}
               aria-current={isActive ? "true" : undefined}
-              className={`group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${isDragOver ? "scale-[1.02]" : ""}`}
+              className={cn(
+                "group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200",
+                isDragOver && "scale-[1.02]",
+              )}
               style={{
                 background: isActive
                   ? "var(--color-accent-light)"
@@ -377,9 +381,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       {/* Toggle button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className={`fixed top-4 left-4 z-50 p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 md:hidden ${
-          isCollapsed ? "" : "hidden"
-        }`}
+        className={cn(
+          "fixed top-4 left-4 z-50 p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 md:hidden",
+          !isCollapsed && "hidden",
+        )}
         style={{
           background: "var(--color-overlay)",
           color: "var(--color-text-secondary)",
@@ -423,9 +428,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         >
           {/* Backdrop */}
           <div
-            className={`absolute inset-0 bg-black/50 backdrop-blur-sm ${
-              closing ? "animate-backdrop-out" : "animate-backdrop"
-            }`}
+            className={cn(
+              "absolute inset-0 bg-black/50 backdrop-blur-sm",
+              closing ? "animate-backdrop-out" : "animate-backdrop",
+            )}
             aria-hidden="true"
           />
 
@@ -434,9 +440,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
             ref={sheetRef}
             onKeyDown={handleTab}
             onAnimationEnd={handleAnimationEnd}
-            className={`relative w-full max-h-[85vh] flex flex-col rounded-t-3xl border-t shadow-2xl overflow-hidden pb-[env(safe-area-inset-bottom)] ${
-              closing ? "animate-slide-down" : "animate-slide-up"
-            }`}
+            className={cn(
+              "relative w-full max-h-[85vh] flex flex-col rounded-t-3xl border-t shadow-2xl overflow-hidden pb-[env(safe-area-inset-bottom)]",
+              closing ? "animate-slide-down" : "animate-slide-up",
+            )}
             style={{
               background: "var(--color-card)",
               borderColor: "var(--color-card-border)",

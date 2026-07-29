@@ -13,7 +13,8 @@ import HeaderActions from "@/components/HeaderActions";
 import FilterTabs from "@/components/FilterTabs";
 import Toast from "@/components/Toast";
 import AppFooter from "@/components/AppFooter";
-import { useTodos, type TodoData } from "@/hooks/useTodos";
+import { useTodos } from "@/hooks/useTodos";
+import type { TodoData } from "@/types";
 import { useTheme } from "@/hooks/useTheme";
 import { useFilter, FILTER_OPTIONS } from "@/hooks/useFilter";
 import { SHORTCUTS } from "@/constants/shortcuts";
@@ -226,66 +227,66 @@ function App() {
       </div>
 
       {/* Import success toast */}
-      {importSuccess && (
-        <Toast
-          icon={
-            <svg className="w-4 h-4" style={{ color: "var(--color-success)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          }
-          message="Data imported successfully!"
-          action={
-            <button
-              onClick={() => setImportSuccess(false)}
-              className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200"
-              style={{ color: "var(--color-text-secondary)", background: "rgba(255,255,255,0.08)" }}
-            >
-              Dismiss
-            </button>
-          }
-          className="bottom-20"
-        />
-      )}
+      <Toast
+        isOpen={importSuccess}
+        onClose={() => setImportSuccess(false)}
+        icon={
+          <svg className="w-4 h-4" style={{ color: "var(--color-success)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        }
+        message="Data imported successfully!"
+        action={
+          <button
+            onClick={() => setImportSuccess(false)}
+            className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200"
+            style={{ color: "var(--color-text-secondary)", background: "rgba(255,255,255,0.08)" }}
+          >
+            Dismiss
+          </button>
+        }
+        className="bottom-20"
+      />
 
       {/* Undo clear completed toast */}
-      {undoCompleted && (
-        <Toast
-          icon={
-            <svg className="w-4 h-4" style={{ color: "var(--color-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          }
-          message={`Cleared ${undoCompleted.length} completed ${undoCompleted.length === 1 ? "todo" : "todos"}`}
-          action={
-            <button
-              onClick={undoClearCompleted}
-              className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-              style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
-            >
-              Undo
-            </button>
-          }
-          className="bottom-20"
-        />
-      )}
+      <Toast
+        isOpen={!!undoCompleted}
+        onClose={undoClearCompleted}
+        icon={
+          <svg className="w-4 h-4" style={{ color: "var(--color-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        }
+        message={`Cleared ${undoCompleted?.length ?? 0} completed ${undoCompleted?.length === 1 ? "todo" : "todos"}`}
+        action={
+          <button
+            onClick={undoClearCompleted}
+            className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+            style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
+          >
+            Undo
+          </button>
+        }
+        className="bottom-20"
+      />
 
       {/* Undo delete toast */}
-      {undoTodo && (
-        <Toast
-          message="Todo deleted"
-          action={
-            <button
-              onClick={undoDelete}
-              className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-              style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
-            >
-              Undo
-            </button>
-          }
-          className="bottom-6"
-          contentClassName="px-4 py-3"
-        />
-      )}
+      <Toast
+        isOpen={!!undoTodo}
+        onClose={undoDelete}
+        message="Todo deleted"
+        action={
+          <button
+            onClick={undoDelete}
+            className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+            style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
+          >
+            Undo
+          </button>
+        }
+        className="bottom-6"
+        contentClassName="px-4 py-3"
+      />
 
       {/* Confetti */}
       <ConfettiEffect trigger={allCompletedInActiveList} onDone={() => {}} />

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Stats } from "@/hooks/useTodos";
+import type { Stats } from "@/types";
 import { priorityConfig } from "@/constants/priorities";
 
 interface StatsDashboardProps {

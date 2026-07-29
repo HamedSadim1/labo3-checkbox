@@ -1,4 +1,4 @@
-import type { TodoItem } from "@/hooks/useTodos";
+import type { TodoItem } from "@/types";
 
 /** Count total todos in the given list. */
 export const getListCount = (todos: TodoItem[], listId: string): number =>

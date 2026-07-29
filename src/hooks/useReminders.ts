@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { TodoItem } from "@/hooks/useTodos";
+import type { TodoItem } from "@/types";
 import { STORAGE_KEYS, TIMING, NOTIFICATION_ICON_PATH } from "@/constants/app";
 
 interface ReminderState {

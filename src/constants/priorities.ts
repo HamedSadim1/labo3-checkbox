@@ -1,4 +1,4 @@
-import type { Priority } from "@/hooks/useTodos";
+import type { Priority } from "@/types";
 
 export const priorityConfig: Record<
   Priority,

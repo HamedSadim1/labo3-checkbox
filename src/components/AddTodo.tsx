@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import type { Priority } from "@/hooks/useTodos";
+import type { Priority } from "@/types";
 import { LIMITS } from "@/constants/app";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 import { priorityConfig } from "@/constants/priorities";
+import { cn } from "@/utils/cn";
 
 interface AddTodoProps {
   onAdd: (text: string, priority: Priority, dueDate: string | null) => void;
@@ -179,7 +180,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
 
       {/* Character counter */}
       {charCount > 0 && (
-        <div className={`text-xs font-medium ${counterColor} animate-fade-in-up`} style={{ marginTop: "4px", textAlign: "right" }}>
+        <div className={cn("text-xs font-medium animate-fade-in-up", counterColor)} style={{ marginTop: "4px", textAlign: "right" }}>
           {charCount}/{LIMITS.TODO_TEXT}
         </div>
       )}

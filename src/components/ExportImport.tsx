@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import type { TodoData } from "@/hooks/useTodos";
+import type { TodoData } from "@/types";
 import { TIMING } from "@/constants/app";
 import { copyToClipboard } from "@/utils/clipboard";
 import Modal from "@/components/Modal";

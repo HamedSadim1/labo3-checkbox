@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { TIMING } from "@/constants/app";
+import { cn } from "@/utils/cn";
 
 interface ModalProps {
   isOpen: boolean;
@@ -66,9 +67,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
     >
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-black/50 backdrop-blur-sm ${
-          closing ? "animate-backdrop-out" : "animate-backdrop"
-        }`}
+        className={cn(
+          "absolute inset-0 bg-black/50 backdrop-blur-sm",
+          closing ? "animate-backdrop-out" : "animate-backdrop",
+        )}
         aria-hidden="true"
       />
 
@@ -78,9 +80,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleTab}
         onAnimationEnd={handleAnimationEnd}
-        className={`relative w-full max-w-lg max-h-[85vh] flex flex-col rounded-2xl border shadow-2xl overflow-hidden ${
-          closing ? "animate-modal-out" : "animate-modal"
-        }`}
+        className={cn(
+          "relative w-full max-w-lg max-h-[85vh] flex flex-col rounded-2xl border shadow-2xl overflow-hidden",
+          closing ? "animate-modal-out" : "animate-modal",
+        )}
         style={{
           background: "var(--color-card)",
           borderColor: "var(--color-card-border)",

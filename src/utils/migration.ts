@@ -1,5 +1,5 @@
 import { LIST_COLORS } from "@/constants/colors";
-import type { Priority, TodoItem, TodoListMeta, TodoData } from "@/hooks/useTodos";
+import type { Priority, TodoItem, TodoListMeta, TodoData } from "@/types";
 
 /**
  * Read a raw unknown value and return a typed Record or fallback.
