@@ -28,9 +28,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div
-      className={`relative flex items-center rounded-xl border-2 transition-all duration-200 ${
-        focused ? "ring-2" : ""
-      }`}
+      className="relative flex items-center rounded-xl border-2 transition-all duration-200"
       style={{
         borderColor: focused ? "var(--color-accent)" : "var(--color-input-border)",
         background: "var(--color-input-bg)",
