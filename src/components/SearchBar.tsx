@@ -33,15 +33,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <div
       className="relative flex items-center rounded-xl border-2 transition-all duration-200"
       style={{
-        borderColor: "var(--color-input-border)",
+        borderColor: focused ? "var(--color-accent)" : "var(--color-input-border)",
         background: "var(--color-input-bg)",
       }}
     >
       {/* Search icon */}
       <svg
-        className="w-4 h-4 ml-3 shrink-0"
+        className="w-5 h-5 ml-3 shrink-0"
         style={{
-          color: value ? "var(--color-accent)" : "var(--color-text-secondary)",
+          color: value || focused ? "var(--color-accent)" : "var(--color-text-secondary)",
         }}
         fill="none"
         stroke="currentColor"
@@ -63,8 +63,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         placeholder={placeholder}
-        className="flex-1 px-2 py-2 bg-transparent text-sm focus:outline-none"
-        style={{ color: "var(--color-text)" }}
+        className="flex-1 min-w-0 pl-3 pr-2 py-2.5 bg-transparent text-sm focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0"
+        style={{ color: "var(--color-text)", outline: "none" }}
       />
 
       {/* Shortcut hint */}
@@ -105,14 +105,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </button>
       )}
 
-      {/* Animated focus indicator */}
-      <div
-        className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300"
-        style={{
-          opacity: focused ? 1 : 0,
-          boxShadow: `0 0 0 3px var(--color-accent-light)`,
-        }}
-      />
     </div>
   );
 };
