@@ -13,29 +13,25 @@ const EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".json", ".mjs", ".cjs"];
 
 // Custom inline resolver for @/ path aliases
 // Avoids the peer dependency conflict of eslint-import-resolver-alias
-const resolveAlias = {
-  interfaceVersion: 2,
-  name: "alias",
-  resolve: (modulePath, sourceFile) => {
-    if (modulePath.startsWith("@/")) {
-      const basePath = path.join(srcDir, modulePath.slice(2));
-      // Try with each extension (skip bare path to avoid matching directories)
-      for (const ext of EXTENSIONS) {
-        const withExt = basePath + ext;
-        if (fs.existsSync(withExt)) {
-          return { found: true, path: withExt };
-        }
-      }
-      // Try index files (e.g. "@/utils" → "src/utils/index.ts")
-      for (const ext of EXTENSIONS) {
-        const indexFile = path.join(basePath, `index${ext}`);
-        if (fs.existsSync(indexFile)) {
-          return { found: true, path: indexFile };
-        }
+const resolveAlias = (modulePath, sourceFile) => {
+  if (modulePath.startsWith("@/")) {
+    const basePath = path.join(srcDir, modulePath.slice(2));
+    // Try with each extension (skip bare path to avoid matching directories)
+    for (const ext of EXTENSIONS) {
+      const withExt = basePath + ext;
+      if (fs.existsSync(withExt)) {
+        return { found: true, path: withExt };
       }
     }
-    return { found: false };
-  },
+    // Try index files (e.g. "@/utils" → "src/utils/index.ts")
+    for (const ext of EXTENSIONS) {
+      const indexFile = path.join(basePath, `index${ext}`);
+      if (fs.existsSync(indexFile)) {
+        return { found: true, path: indexFile };
+      }
+    }
+  }
+  return { found: false };
 };
 
 export default tseslint.config(
