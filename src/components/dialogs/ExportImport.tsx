@@ -105,7 +105,8 @@ const ExportImport: React.FC<ExportImportProps> = ({
           onClick={() => setMode("export")}
           className="flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
           style={{
-            background: mode === "export" ? "var(--color-accent)" : "transparent",
+            background:
+              mode === "export" ? "var(--color-accent)" : "transparent",
             color: mode === "export" ? "#fff" : "var(--color-text-secondary)",
           }}
         >
@@ -116,7 +117,8 @@ const ExportImport: React.FC<ExportImportProps> = ({
           onClick={() => setMode("import")}
           className="flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200"
           style={{
-            background: mode === "import" ? "var(--color-accent)" : "transparent",
+            background:
+              mode === "import" ? "var(--color-accent)" : "transparent",
             color: mode === "import" ? "#fff" : "var(--color-text-secondary)",
           }}
         >
@@ -126,8 +128,12 @@ const ExportImport: React.FC<ExportImportProps> = ({
 
       {mode === "export" ? (
         <div className="space-y-3">
-          <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-            Your todo data includes {data.lists.length} lists and {data.todos.length} todos.
+          <p
+            className="text-xs"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
+            Your todo data includes {data.lists.length} lists and{" "}
+            {data.todos.length} todos.
           </p>
           <textarea
             readOnly
@@ -145,7 +151,9 @@ const ExportImport: React.FC<ExportImportProps> = ({
               onClick={handleCopy}
               className="flex-1 py-2.5 rounded-lg text-sm font-medium ui-hover-scale-sm"
               style={{
-                background: copied ? "var(--color-success)" : "var(--color-accent)",
+                background: copied
+                  ? "var(--color-success)"
+                  : "var(--color-accent)",
                 color: "#fff",
               }}
             >
@@ -167,13 +175,17 @@ const ExportImport: React.FC<ExportImportProps> = ({
         </div>
       ) : (
         <div className="space-y-3">
-          <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
-            Paste JSON or upload a file to restore your todos. This will replace all current data.
+          <p
+            className="text-xs"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
+            Paste JSON or upload a file to restore your todos. This will replace
+            all current data.
           </p>
 
           {/* File upload */}
           <div
-            className="flex items-center justify-center p-6 rounded-xl border-2 border-dashed cursor-pointer ui-transition hover:border-[var(--color-accent)]"
+            className="flex items-center justify-center p-6 rounded-xl border-2 border-dashed cursor-pointer ui-transition hover:border-(--color-accent)"
             style={{ borderColor: "var(--color-input-border)" }}
             onClick={() => fileInputRef.current?.click()}
           >
@@ -191,7 +203,10 @@ const ExportImport: React.FC<ExportImportProps> = ({
                 strokeWidth={1.5}
                 style={{ color: "var(--color-text-secondary)" }}
               />
-              <p className="text-sm font-medium" style={{ color: "var(--color-text-secondary)" }}>
+              <p
+                className="text-sm font-medium"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
                 Click to upload a .json file
               </p>
             </div>
@@ -201,7 +216,10 @@ const ExportImport: React.FC<ExportImportProps> = ({
           <div className="relative">
             <textarea
               value={importJson}
-              onChange={(e) => { setImportJson(e.target.value); setImportError(""); }}
+              onChange={(e) => {
+                setImportJson(e.target.value);
+                setImportError("");
+              }}
               placeholder={PLACEHOLDERS.IMPORT_JSON}
               className="w-full h-28 p-3 rounded-xl text-xs font-mono focus:outline-none resize-none"
               style={{
@@ -226,7 +244,10 @@ const ExportImport: React.FC<ExportImportProps> = ({
           </div>
 
           {importError && (
-            <p className="text-xs font-medium" style={{ color: "var(--color-danger)" }}>
+            <p
+              className="text-xs font-medium"
+              style={{ color: "var(--color-danger)" }}
+            >
               {importError}
             </p>
           )}
