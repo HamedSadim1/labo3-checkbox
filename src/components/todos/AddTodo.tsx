@@ -1,19 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import type { Priority } from "@/types";
-import { LIMITS } from "@/constants/app";
+import { LIMITS, PLACEHOLDERS } from "@/constants/app";
 import { SoundEffects } from "@/hooks/useSoundEffects";
-import { priorityConfig } from "@/constants/priorities";
+import { PRIORITY_OPTIONS } from "@/constants/priorities";
 import { cn } from "@/utils/cn";
+import { Icon } from "@/components/icons/Icon";
 
 interface AddTodoProps {
   onAdd: (text: string, priority: Priority, dueDate: string | null) => void;
 }
-
-const priorities = (Object.keys(priorityConfig) as Priority[]).map((value) => ({
-  value,
-  label: priorityConfig[value].label,
-  color: priorityConfig[value].color,
-}));
 
 const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
   const [text, setText] = useState("");
@@ -54,7 +49,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
           ? "text-amber-300"
           : "text-white/50 dark:text-white/40";
 
-  const selectedPriority = priorities.find((p) => p.value === priority)!;
+  const selectedPriority = PRIORITY_OPTIONS.find((p) => p.value === priority)!;
 
   return (
     <form onSubmit={handleSubmit} className="mb-5">
@@ -75,7 +70,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="What needs to be done?"
+          placeholder={PLACEHOLDERS.ADD_TODO}
           maxLength={LIMITS.TODO_TEXT}
           className="flex-1 px-4 py-2.5 bg-transparent rounded-lg focus:outline-none text-sm"
           style={{ color: "var(--color-text)" }}
@@ -85,32 +80,28 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
         <button
           type="button"
           onClick={() => setShowPriority(!showPriority)}
-          className="px-2 py-2 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105"
+          className="px-2 py-2 rounded-lg text-xs font-medium ui-hover-scale-sm"
           style={{
             background: showPriority ? "var(--color-accent-light)" : "var(--color-overlay)",
             color: selectedPriority.color,
           }}
           title={`Priority: ${selectedPriority.label}`}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-          </svg>
+          <Icon name="chevronUp" className="w-4 h-4" />
         </button>
 
         {/* Date quick button */}
         <button
           type="button"
           onClick={() => setShowDate(!showDate)}
-          className="px-2 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+          className="px-2 py-2 rounded-lg ui-hover-scale-sm"
           style={{
             background: showDate ? "var(--color-accent-light)" : "var(--color-overlay)",
             color: dueDate ? "var(--color-accent)" : "var(--color-text-secondary)",
           }}
           title="Set due date"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
+          <Icon name="calendar" className="w-4 h-4" />
         </button>
 
         {/* Submit button */}
@@ -132,7 +123,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
         {/* Priority selector */}
         {showPriority && (
           <div className="flex gap-1 p-1 rounded-lg animate-fade-in-down" style={{ background: "var(--color-overlay)" }}>
-            {priorities.map((p) => (
+            {PRIORITY_OPTIONS.map((p) => (
               <button
                 key={p.value}
                 type="button"
@@ -168,7 +159,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAdd }) => {
               <button
                 type="button"
                 onClick={() => setDueDate("")}
-                className="ml-1 px-2 py-1.5 rounded-lg text-xs transition-all duration-200"
+                className="ml-1 px-2 py-1.5 rounded-lg text-xs ui-transition"
                 style={{ color: "var(--color-text-secondary)" }}
               >
                 Clear

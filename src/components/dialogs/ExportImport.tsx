@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import type { TodoData } from "@/types";
-import { TIMING } from "@/constants/app";
+import { PLACEHOLDERS, TIMING } from "@/constants/app";
 import { copyToClipboard } from "@/utils/clipboard";
-import Modal from "@/components/Modal";
+import Modal from "@/components/ui/Modal";
+import { Icon } from "@/components/icons/Icon";
 
 interface ExportImportProps {
   data: TodoData;
@@ -142,7 +143,7 @@ const ExportImport: React.FC<ExportImportProps> = ({
             <button
               type="button"
               onClick={handleCopy}
-              className="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+              className="flex-1 py-2.5 rounded-lg text-sm font-medium ui-hover-scale-sm"
               style={{
                 background: copied ? "var(--color-success)" : "var(--color-accent)",
                 color: "#fff",
@@ -153,7 +154,7 @@ const ExportImport: React.FC<ExportImportProps> = ({
             <button
               type="button"
               onClick={handleDownload}
-              className="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
+              className="flex-1 py-2.5 rounded-lg text-sm font-medium ui-hover-scale-sm"
               style={{
                 background: "var(--color-overlay)",
                 color: "var(--color-text)",
@@ -172,7 +173,7 @@ const ExportImport: React.FC<ExportImportProps> = ({
 
           {/* File upload */}
           <div
-            className="flex items-center justify-center p-6 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 hover:border-[var(--color-accent)]"
+            className="flex items-center justify-center p-6 rounded-xl border-2 border-dashed cursor-pointer ui-transition hover:border-[var(--color-accent)]"
             style={{ borderColor: "var(--color-input-border)" }}
             onClick={() => fileInputRef.current?.click()}
           >
@@ -184,9 +185,12 @@ const ExportImport: React.FC<ExportImportProps> = ({
               className="hidden"
             />
             <div className="text-center">
-              <svg className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--color-text-secondary)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
+              <Icon
+                name="upload"
+                className="w-8 h-8 mx-auto mb-2"
+                strokeWidth={1.5}
+                style={{ color: "var(--color-text-secondary)" }}
+              />
               <p className="text-sm font-medium" style={{ color: "var(--color-text-secondary)" }}>
                 Click to upload a .json file
               </p>
@@ -198,7 +202,7 @@ const ExportImport: React.FC<ExportImportProps> = ({
             <textarea
               value={importJson}
               onChange={(e) => { setImportJson(e.target.value); setImportError(""); }}
-              placeholder="...or paste JSON here"
+              placeholder={PLACEHOLDERS.IMPORT_JSON}
               className="w-full h-28 p-3 rounded-xl text-xs font-mono focus:outline-none resize-none"
               style={{
                 background: "var(--color-input-bg)",

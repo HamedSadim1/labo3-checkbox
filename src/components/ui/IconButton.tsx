@@ -27,7 +27,7 @@ const IconButton: FC<IconButtonProps> = ({
       type={type}
       onClick={onClick}
       className={cn(
-        "p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95",
+        "p-2 rounded-xl ui-hover-scale active:scale-95",
         className,
       )}
       style={{

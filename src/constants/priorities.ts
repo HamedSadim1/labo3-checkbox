@@ -8,3 +8,11 @@ export const priorityConfig: Record<
   medium: { color: "#f59e0b", bg: "rgba(245, 158, 11, 0.12)", label: "Med" },
   high: { color: "#ef4444", bg: "rgba(239, 68, 68, 0.12)", label: "High" },
 };
+
+export const PRIORITY_OPTIONS = (Object.keys(priorityConfig) as Priority[]).map(
+  (value) => ({
+    value,
+    label: priorityConfig[value].label,
+    color: priorityConfig[value].color,
+  }),
+);

@@ -5,6 +5,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { PLACEHOLDERS, TIMING } from "@/constants/app";
 import { getListCount, getListActiveCount } from "@/utils/todos";
 import { cn } from "@/utils/cn";
+import { Icon } from "@/components/icons/Icon";
 
 interface SidebarProps {
   lists: TodoListMeta[];
@@ -113,23 +114,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         </h2>
         <button
           onClick={() => setIsAdding(true)}
-          className="p-1.5 rounded-lg transition-all duration-200 hover:scale-110"
+          className="p-1.5 rounded-lg ui-hover-scale-sm"
           style={{ color: "var(--color-accent)" }}
           aria-label="Add list"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
+          <Icon name="plus" className="w-4 h-4" />
         </button>
       </div>
 
@@ -287,23 +276,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                     onDelete(list.id);
                   }}
                   onKeyDown={(e) => e.stopPropagation()}
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all duration-200 hover:scale-110"
+                  className="opacity-0 group-hover:opacity-100 p-1 rounded-lg ui-hover-scale"
                   style={{ color: "var(--color-danger)" }}
                   aria-label={`Delete ${list.name}`}
                 >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <Icon name="close" className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -382,7 +359,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className={cn(
-          "fixed top-4 left-4 z-50 p-2 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 md:hidden",
+          "fixed top-4 left-4 z-50 p-2 rounded-xl ui-hover-scale active:scale-95 md:hidden",
           !isCollapsed && "hidden",
         )}
         style={{
@@ -391,19 +368,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         }}
         aria-label={isCollapsed ? "Show lists" : "Hide lists"}
       >
-        <svg
+        <Icon
+          name={isCollapsed ? "menu" : "close"}
           className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d={isCollapsed ? "M4 6h16M4 12h16M4 18h16" : "M6 18L18 6M6 6l12 12"}
-          />
-        </svg>
+        />
       </button>
 
       {/* Desktop sidebar */}
@@ -462,23 +430,11 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
                 ref={closeButtonRef}
                 type="button"
                 onClick={() => setIsCollapsed(true)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all duration-200 hover:scale-110"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg ui-hover-scale"
                 style={{ color: "var(--color-text-secondary)" }}
                 aria-label="Close lists"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <Icon name="close" className="w-5 h-5" />
               </button>
             </div>
 

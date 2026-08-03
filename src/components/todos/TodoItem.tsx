@@ -5,10 +5,11 @@ import type {
   TodoListMeta,
 } from "@/types";
 import { SoundEffects } from "@/hooks/useSoundEffects";
-import { priorityConfig } from "@/constants/priorities";
+import { PRIORITY_OPTIONS, priorityConfig } from "@/constants/priorities";
 import { TIMING, SWIPE } from "@/constants/app";
 import { formatDueInfo } from "@/utils/date";
 import { cn } from "@/utils/cn";
+import { Icon } from "@/components/icons/Icon";
 
 interface TodoItemProps {
   todo: TodoItemType;
@@ -88,12 +89,17 @@ const TodoItem: React.FC<TodoItemProps> = ({
     onToggle(todo.id);
   };
 
-  const handleDoubleClick = () => {
-    if (!todo.completed) {
-      setEditText(todo.text);
-      setIsEditing(true);
-      SoundEffects.edit();
-    }
+  const handleEditStart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setEditText(todo.text);
+    setIsEditing(true);
+    SoundEffects.edit();
+  };
+
+  const handleItemClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // A double-click should not toggle the todo twice.
+    if (e.detail > 1) return;
+    handleToggle();
   };
 
   const handleEditSubmit = () => {
@@ -119,6 +125,17 @@ const TodoItem: React.FC<TodoItemProps> = ({
 
   const actionButtons = (
     <>
+      {/* Edit button */}
+      <button
+        onClick={handleEditStart}
+        className="p-3 rounded-lg ui-hover-scale hover:bg-indigo-500/10"
+        style={{ color: "var(--color-accent)" }}
+        aria-label="Edit todo"
+        title="Edit todo"
+      >
+        <Icon name="edit" className="w-4 h-4" />
+      </button>
+
       {/* More actions dropdown */}
       <div className="relative">
         <button
@@ -126,23 +143,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
             e.stopPropagation();
             setShowActions(!showActions);
           }}
-          className="p-3 rounded-lg transition-all duration-200 hover:scale-110"
+          className="p-3 rounded-lg ui-hover-scale"
           style={{ color: "var(--color-text-secondary)" }}
           aria-label="More actions"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 5v.01M12 12v.01M12 19v.01"
-            />
-          </svg>
+          <Icon name="dotsVertical" className="w-4 h-4" />
         </button>
 
         {/* Dropdown menu */}
@@ -175,32 +180,30 @@ const TodoItem: React.FC<TodoItemProps> = ({
                   Priority
                 </p>
                 <div className="flex gap-1">
-                  {(
-                    Object.entries(priorityConfig) as [
-                      Priority,
-                      typeof priorityConfig.low,
-                    ][]
-                  ).map(([key, cfg]) => (
-                    <button
-                      key={key}
-                      onClick={() => {
-                        onUpdatePriority(todo.id, key);
-                        setShowActions(false);
-                      }}
-                      className="flex-1 px-3 py-2 rounded text-[10px] font-semibold transition-all duration-200"
-                      style={{
-                        background:
-                          todo.priority === key ? cfg.bg : "transparent",
-                        color: cfg.color,
-                        border:
-                          todo.priority === key
-                            ? `1px solid ${cfg.color}44`
+                  {PRIORITY_OPTIONS.map(({ value, label, color }) => {
+                    const isSelected = todo.priority === value;
+                    return (
+                      <button
+                        key={value}
+                        onClick={() => {
+                          onUpdatePriority(todo.id, value);
+                          setShowActions(false);
+                        }}
+                        className="flex-1 px-3 py-2 rounded text-[10px] font-semibold transition-all duration-200"
+                        style={{
+                          background: isSelected
+                            ? priorityConfig[value].bg
+                            : "transparent",
+                          color,
+                          border: isSelected
+                            ? `1px solid ${color}44`
                             : "1px solid transparent",
-                      }}
-                    >
-                      {cfg.label}
-                    </button>
-                  ))}
+                        }}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -254,19 +257,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
                           : "Enable notifications"
                       }
                     >
-                      <svg
+                      <Icon
+                        name="bell"
                         className="w-3.5 h-3.5"
                         fill={todo.reminderEnabled ? "currentColor" : "none"}
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                        />
-                      </svg>
+                      />
                     </button>
                   )}
                 </div>
@@ -345,23 +340,11 @@ const TodoItem: React.FC<TodoItemProps> = ({
           e.stopPropagation();
           handleDelete();
         }}
-        className="p-3 rounded-lg transition-all duration-200 hover:scale-110 hover:bg-red-500/10"
+        className="p-3 rounded-lg ui-hover-scale hover:bg-red-500/10"
         style={{ color: "var(--color-danger)" }}
         aria-label="Delete todo"
       >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-          />
-        </svg>
+        <Icon name="trash" className="w-4 h-4" />
       </button>
     </>
   );
@@ -386,7 +369,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onClick={!isEditing ? handleToggle : undefined}
+      onClick={!isEditing ? handleItemClick : undefined}
     >
       {/* Swipe delete indicator */}
       {swipeOffset < SWIPE.LABEL_SHOW && (
@@ -410,17 +393,12 @@ const TodoItem: React.FC<TodoItemProps> = ({
           aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
         >
           {todo.completed && (
-            <svg viewBox="0 0 24 24" fill="none">
-              <path
-                className="checkmark"
-                d="M5 13l4 4L19 7"
-                stroke="white"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
+            <Icon
+              name="check"
+              className="w-4 h-4"
+              stroke="white"
+              strokeWidth={3}
+            />
           )}
         </button>
 
@@ -454,8 +432,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
                   ? "var(--color-text-secondary)"
                   : "var(--color-text)",
               }}
-              onDoubleClick={handleDoubleClick}
-              title={todo.completed ? "" : "Double-click to edit"}
+
             >
               {todo.text}
             </span>
@@ -494,33 +471,20 @@ const TodoItem: React.FC<TodoItemProps> = ({
                       : "var(--color-overlay)",
                   }}
                 >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
+                  <Icon name="calendar" className="w-3.5 h-3.5" />
                   {dueInfo.text}
                   {todo.reminderEnabled && (
-                    <svg
+                    <Icon
+                      name="bell"
                       className="w-3 h-3"
                       fill="currentColor"
-                      viewBox="0 0 24 24"
+                      stroke="none"
                       style={{
                         color: dueInfo.urgent
                           ? "var(--color-danger)"
                           : "var(--color-accent)",
                       }}
-                    >
-                      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-                    </svg>
+                    />
                   )}
                 </span>
               )}

@@ -1,18 +1,19 @@
 import { useState, useMemo, useCallback } from "react";
-import TodoList from "@/components/TodoList";
-import AddTodo from "@/components/AddTodo";
-import Sidebar from "@/components/Sidebar";
-import SearchBar from "@/components/SearchBar";
-import StatsDashboard from "@/components/StatsDashboard";
-import Modal from "@/components/Modal";
-import ShortcutsHelp from "@/components/ShortcutsHelp";
-import ConfettiEffect from "@/components/Confetti";
-import ExportImport from "@/components/ExportImport";
-import Header from "@/components/Header";
-import HeaderActions from "@/components/HeaderActions";
-import FilterTabs from "@/components/FilterTabs";
-import Toast from "@/components/Toast";
-import AppFooter from "@/components/AppFooter";
+import TodoList from "@/components/todos/TodoList";
+import AddTodo from "@/components/todos/AddTodo";
+import Sidebar from "@/components/layout/Sidebar";
+import SearchBar from "@/components/todos/SearchBar";
+import StatsDashboard from "@/components/dialogs/StatsDashboard";
+import Modal from "@/components/ui/Modal";
+import ShortcutsHelp from "@/components/dialogs/ShortcutsHelp";
+import ConfettiEffect from "@/components/ui/Confetti";
+import ExportImport from "@/components/dialogs/ExportImport";
+import Header from "@/components/layout/Header";
+import HeaderActions from "@/components/layout/HeaderActions";
+import FilterTabs from "@/components/todos/FilterTabs";
+import Toast from "@/components/ui/Toast";
+import ToastAction from "@/components/ui/ToastAction";
+import AppFooter from "@/components/layout/AppFooter";
 import { useTodos } from "@/hooks/useTodos";
 import type { TodoData } from "@/types";
 import { useTheme } from "@/hooks/useTheme";
@@ -22,6 +23,7 @@ import { PLACEHOLDERS } from "@/constants/app";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { SoundEffects } from "@/hooks/useSoundEffects";
 import { useReminders } from "@/hooks/useReminders";
+import { Icon } from "@/components/icons/Icon";
 
 function App() {
   const {
@@ -231,19 +233,17 @@ function App() {
         isOpen={importSuccess}
         onClose={() => setImportSuccess(false)}
         icon={
-          <svg className="w-4 h-4" style={{ color: "var(--color-success)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+          <Icon name="check" className="w-4 h-4" style={{ color: "var(--color-success)" }} />
         }
         message="Data imported successfully!"
         action={
-          <button
+          <ToastAction
+            tone="muted"
+            hoverScale={false}
             onClick={() => setImportSuccess(false)}
-            className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200"
-            style={{ color: "var(--color-text-secondary)", background: "rgba(255,255,255,0.08)" }}
           >
             Dismiss
-          </button>
+          </ToastAction>
         }
         className="bottom-20"
       />
@@ -253,19 +253,11 @@ function App() {
         isOpen={!!undoCompleted}
         onClose={undoClearCompleted}
         icon={
-          <svg className="w-4 h-4" style={{ color: "var(--color-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
+          <Icon name="trash" className="w-4 h-4" style={{ color: "var(--color-accent)" }} />
         }
         message={`Cleared ${undoCompleted?.length ?? 0} completed ${undoCompleted?.length === 1 ? "todo" : "todos"}`}
         action={
-          <button
-            onClick={undoClearCompleted}
-            className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-            style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
-          >
-            Undo
-          </button>
+          <ToastAction onClick={undoClearCompleted}>Undo</ToastAction>
         }
         className="bottom-20"
       />
@@ -276,13 +268,7 @@ function App() {
         onClose={undoDelete}
         message="Todo deleted"
         action={
-          <button
-            onClick={undoDelete}
-            className="text-sm font-semibold px-3 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-            style={{ color: "var(--color-accent)", background: "rgba(255,255,255,0.08)" }}
-          >
-            Undo
-          </button>
+          <ToastAction onClick={undoDelete}>Undo</ToastAction>
         }
         className="bottom-6"
         contentClassName="px-4 py-3"

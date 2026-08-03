@@ -3,6 +3,7 @@ import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { TIMING } from "@/constants/app";
 import { cn } from "@/utils/cn";
+import { Icon } from "@/components/icons/Icon";
 
 interface ModalProps {
   isOpen: boolean;
@@ -81,11 +82,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         onKeyDown={handleTab}
         onAnimationEnd={handleAnimationEnd}
         className={cn(
-          "relative w-full max-w-lg max-h-[85vh] flex flex-col rounded-2xl border shadow-2xl overflow-hidden",
+          "relative w-full max-w-lg max-h-[85vh] flex flex-col rounded-2xl border shadow-2xl overflow-hidden app-card-surface",
           closing ? "animate-modal-out" : "animate-modal",
         )}
         style={{
-          background: "var(--color-card)",
           borderColor: "var(--color-card-border)",
         }}
       >
@@ -104,23 +104,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
+            className="p-2 rounded-lg ui-hover-scale"
             style={{ color: "var(--color-text-secondary)" }}
             aria-label="Close"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <Icon name="close" className="w-5 h-5" />
           </button>
         </div>
 

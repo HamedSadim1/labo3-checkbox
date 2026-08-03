@@ -11,10 +11,11 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import TodoItem from "@/components/TodoItem";
+import TodoItem from "@/components/todos/TodoItem";
 import type { TodoItem as TodoItemType, Priority, TodoListMeta } from "@/types";
 import type { Filter } from "@/context/FilterContext";
 import { SoundEffects } from "@/hooks/useSoundEffects";
+import { Icon } from "@/components/icons/Icon";
 
 interface TodoListProps {
   todos: TodoItemType[];
@@ -89,9 +90,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
         style={{ color: "var(--color-text-secondary)" }}
         aria-label="Drag to reorder"
       >
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-        </svg>
+        <Icon name="drag" className="w-5 h-5" />
       </button>
 
       <TodoItem
@@ -160,15 +159,12 @@ const TodoList: React.FC<TodoListProps> = ({
         style={{ borderColor: "var(--color-input-border)", background: "var(--color-overlay)" }}
       >
         {/* Dynamic empty state icon */}
-        <svg className="w-14 h-14 mb-3" style={{ color: "var(--color-empty-icon)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          {searchQuery ? (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          ) : filter === "completed" ? (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6m-6 4l2 2 4-4" />
-          ) : (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6" />
-          )}
-        </svg>
+        <Icon
+          name={searchQuery ? "search" : filter === "completed" ? "clipboardCheck" : "clipboard"}
+          className="w-14 h-14 mb-3"
+          strokeWidth={1.5}
+          style={{ color: "var(--color-empty-icon)" }}
+        />
 
         <p className="text-base font-medium mb-1" style={{ color: "var(--color-text-secondary)" }}>
           {searchQuery ? "No results found" : filter === "all" ? "No todos yet" : filter === "active" ? "All done! " : "No completed todos"}
@@ -248,7 +244,7 @@ const TodoList: React.FC<TodoListProps> = ({
           {hasCompleted && (
             <button
               onClick={() => { onClearCompleted(); SoundEffects.clear(); }}
-              className="text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105"
+              className="text-xs font-medium px-3 py-1.5 rounded-lg ui-hover-scale-sm"
               style={{ color: "var(--color-text-secondary)" }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLButtonElement).style.color = "var(--color-danger)";

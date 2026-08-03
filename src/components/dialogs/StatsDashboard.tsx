@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Stats } from "@/types";
 import { priorityConfig } from "@/constants/priorities";
+import { CompletionRing, Icon } from "@/components/icons/Icon";
 
 interface StatsDashboardProps {
   stats: Stats;
@@ -22,19 +23,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Total",
         value: stats.totalTodos,
         icon: (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 5h6"
-            />
-          </svg>
+          <Icon name="clipboard" className="w-4 h-4" />
         ),
         color: "var(--color-accent)",
       },
@@ -42,19 +31,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Active",
         value: stats.activeTodos,
         icon: (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-            />
-          </svg>
+          <Icon name="inbox" className="w-4 h-4" />
         ),
         color: "var(--color-text)",
       },
@@ -62,19 +39,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Completed",
         value: stats.completedTodos,
         icon: (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+          <Icon name="check" className="w-4 h-4" />
         ),
         color: "var(--color-success)",
       },
@@ -82,19 +47,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Overdue",
         value: stats.overdueTodos,
         icon: (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+          <Icon name="warning" className="w-4 h-4" />
         ),
         color: "var(--color-danger)",
         urgent: stats.overdueTodos > 0,
@@ -103,19 +56,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         label: "Due Today",
         value: stats.dueTodayTodos,
         icon: (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-            />
-          </svg>
+          <Icon name="calendar" className="w-4 h-4" />
         ),
         color: "var(--color-accent)",
       },
@@ -144,31 +85,10 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
       {/* Completion ring */}
       <div className="flex items-center justify-center mb-4">
         <div className="relative w-20 h-20">
-          <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
-            <circle
-              cx="18"
-              cy="18"
-              r="15.5"
-              fill="none"
-              stroke="var(--color-overlay)"
-              strokeWidth="3"
-            />
-            <circle
-              cx="18"
-              cy="18"
-              r="15.5"
-              fill="none"
-              stroke={
-                stats.completionRate === 100
-                  ? "var(--color-success)"
-                  : "var(--color-accent)"
-              }
-              strokeWidth="3"
-              strokeDasharray={`${stats.completionRate} ${100 - stats.completionRate}`}
-              strokeLinecap="round"
-              className="transition-all duration-1000 ease-out"
-            />
-          </svg>
+          <CompletionRing
+            percentage={stats.completionRate}
+            className="w-20 h-20 -rotate-90"
+          />
           <div className="absolute inset-0 flex items-center justify-center">
             <span
               className="text-lg font-bold"
@@ -185,7 +105,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ stats }) => {
         {cards.map((card) => (
           <div
             key={card.label}
-            className="flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02]"
+            className="flex items-center gap-2 px-3 py-2.5 rounded-xl ui-hover-scale-sm"
             style={{
               background: "var(--color-overlay)",
               border: "1px solid var(--color-input-border)",

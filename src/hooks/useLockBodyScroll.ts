@@ -5,6 +5,7 @@ let originalOverflow = "";
 let originalPosition = "";
 let originalTop = "";
 let originalWidth = "";
+let originalPaddingRight = "";
 let originalScrollY = 0;
 
 /**
@@ -21,7 +22,18 @@ export const useLockBodyScroll = (isLocked: boolean) => {
       originalPosition = document.body.style.position;
       originalTop = document.body.style.top;
       originalWidth = document.body.style.width;
+      originalPaddingRight = document.body.style.paddingRight;
       originalScrollY = window.scrollY;
+
+      // Preserve the space occupied by the scrollbar so the page does not shift
+      // horizontally when body scrolling is disabled.
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        const currentPaddingRight = Number.parseFloat(
+          window.getComputedStyle(document.body).paddingRight,
+        ) || 0;
+        document.body.style.paddingRight = `${currentPaddingRight + scrollbarWidth}px`;
+      }
 
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
@@ -39,6 +51,7 @@ export const useLockBodyScroll = (isLocked: boolean) => {
         document.body.style.position = originalPosition;
         document.body.style.top = originalTop;
         document.body.style.width = originalWidth;
+        document.body.style.paddingRight = originalPaddingRight;
         window.scrollTo(0, originalScrollY);
       }
     };

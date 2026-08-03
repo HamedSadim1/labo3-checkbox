@@ -43,6 +43,40 @@
   --color-empty-icon: #475569;
 }
 
+/* ── Shared Tailwind utilities (DRY / SSOT) ── */
+@utility ui-transition {
+  transition: all 0.2s ease;
+}
+
+@utility ui-hover-scale {
+  transition: all 0.2s ease;
+
+  &:hover {
+    scale: 1.1;
+  }
+}
+
+@utility ui-hover-scale-sm {
+  transition: all 0.2s ease;
+
+  &:hover {
+    scale: 1.05;
+  }
+}
+
+@utility ui-hover-scale-xs {
+  transition: all 0.2s ease;
+
+  &:hover {
+    scale: 1.02;
+  }
+}
+
+@utility app-card-surface {
+  background-color: var(--color-card);
+  border-color: var(--color-card-border);
+}
+
 /* Smooth transitions for theme switching */
 *,
 *::before,
